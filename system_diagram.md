@@ -103,7 +103,7 @@ graph TD
     SolarPanel ---|MPPT PV+/-| MPPT
 
     Orion ---|Orion Out+ > Cyrix Term 30| Cyrix
-    Cyrix ---|Cyrix Term 30 > Stud 1| HousePosBus
+    Cyrix ---|Cyrix Term 30| HousePosBus
     
     %% Negative Returns - Upper Board
     Orion ---|Orion In-/Out- > Neg Bus| UpperNegBus
@@ -123,10 +123,10 @@ graph TD
     Fridge ---|XT60 Patch| XT60_Load1
     DieselHeater ---|XT60 Patch| XT60_Load2
     
-    HousePosBus ---|Stud 2| XT60_Bat1
-    HousePosBus ---|Stud 3| XT60_Bat2
-    HousePosBus ---|Stud 4| XT60_Load1
-    HousePosBus ---|Stud 5| XT60_Load2
+    HousePosBus --- XT60_Bat1
+    HousePosBus --- XT60_Bat2
+    HousePosBus --- XT60_Load1
+    HousePosBus --- XT60_Load2
 ```
 
 ## Implementation Notes:
