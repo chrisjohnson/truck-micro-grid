@@ -33,12 +33,17 @@ graph TD
         MC4["MC4 Logic Connector"]
         HousePosBus["House Positive Bus Bar"]
         HouseNegBus["Lower Neg Bus Bar"]
-        XT60_Bat1["XT60 Battery 1"]
-        XT60_Bat2["XT60 Battery 2"]
-        XT60_Load1["XT60 Load 1"]
-        XT60_Load2["XT60 Load 2"]
+        XT60_Bat1["XT60 Battery Port 1"]
+        XT60_Bat2["XT60 Battery Port 2"]
+        XT60_Load1["XT60 Load Port 1"]
+        XT60_Load2["XT60 Load Port 2"]
         HouseBat1["Goldenmate Battery 1"]
         HouseBat2["Goldenmate Battery 2"]
+    end
+
+    subgraph HouseLoads ["House Loads"]
+        Fridge["12V Compressor Fridge"]
+        DieselHeater["Diesel Heater"]
     end
 
     subgraph UpperBoard ["Upper Sub-Board (Ceiling)"]
@@ -102,14 +107,20 @@ graph TD
     MPPT ---|MPPT Bat- > Neg Bus| UpperNegBus
     Relay ---|Relay Pin 85 > Neg Bus| UpperNegBus
     
-    %% Negative Returns - Lower Board
-    HouseBat1 ---|Neg Patch| HouseNegBus
-    HouseBat2 ---|Neg Patch| HouseNegBus
+    %% Lower Board Bus Connections
+    XT60_Bat1 ---|Neg Return| HouseNegBus
+    XT60_Bat2 ---|Neg Return| HouseNegBus
     XT60_Load1 ---|Neg Return| HouseNegBus
     XT60_Load2 ---|Neg Return| HouseNegBus
     
-    HousePosBus ---|Stud 2| XT60_Bat1 --- HouseBat1
-    HousePosBus ---|Stud 3| XT60_Bat2 --- HouseBat2
+    %% Battery and Load Patch Connections
+    HouseBat1 ---|XT60 Patch| XT60_Bat1
+    HouseBat2 ---|XT60 Patch| XT60_Bat2
+    Fridge ---|XT60 Patch| XT60_Load1
+    DieselHeater ---|XT60 Patch| XT60_Load2
+    
+    HousePosBus ---|Stud 2| XT60_Bat1
+    HousePosBus ---|Stud 3| XT60_Bat2
     HousePosBus ---|Stud 4| XT60_Load1
     HousePosBus ---|Stud 5| XT60_Load2
 ```
