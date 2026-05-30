@@ -126,54 +126,54 @@ graph TD
 
     %% Connections with precise terminal labels
     StarterBat --- SW6Relay
-    SW6Relay ---|F-40a-jcase:output-stud| JCase40
+    SW6Relay ---|Fuse-40a-jcase:sw6relay-output| JCase40
     JCase40 ---|pos-hwy| PosHighway
     StarterBat ---|neg-hwy| NegHighway
     IgnitionSrc ---|ign-line| IgnitionHighway
 
     PosHighway --- PosTJunction
-    PosTJunction ---|F-40a-maxi:bus:bus:F-5a-atc| TailLightFuse --- BedLights
-    PosTJunction ---|F-40a-maxi:bus:bus| Anderson
+    PosTJunction ---|Fuse-40a-maxi:Fuse-5a-atc| TailLightFuse --- BedLights
+    PosTJunction ---|Fuse-40a-maxi| Anderson
 
     NegHighway --- NegTJunction
-    NegTJunction ---|bus:bus| TailLightNeg --- BedLights
-    NegTJunction ---|bus:bus| Anderson
+    NegTJunction --- TailLightNeg --- BedLights
+    NegTJunction --- Anderson
 
-    Anderson ---|bus:bus| TruckPosBus
-    Anderson ---|bus:bus| HouseNegBus
-    HouseNegBus ---|bus:bus| UpperNegBus
+    Anderson --- TruckPosBus
+    Anderson --- HouseNegBus
+    HouseNegBus --- UpperNegBus
     IgnitionHighway --- MC4
 
-    MC4 ---|r-86| Relay
-    TruckPosBus ---|F-2a-atc:bus:bus| LogicFuse
-    LogicFuse ---|bus:bus| Wago
+    MC4 ---|relay-86| Relay
+    TruckPosBus ---|Fuse-2a-atc| LogicFuse
+    LogicFuse --- Wago
 
-    Wago ---|bus:r-30| Relay
-    Wago ---|bus:s-input| SolarSwitch
-    SolarSwitch ---|s-output:m-remote-yellow| MPPT
+    Wago ---|relay-30| Relay
+    Wago ---|solarswitch-input| SolarSwitch
+    SolarSwitch ---|solarswitch-output:mppt-remote-yellow| MPPT
 
-    Relay ---|r-87a:c-85| Cyrix
-    Relay ---|r-87:o-remote-h| Orion
+    Relay ---|relay-87a:cyrix-85| Cyrix
+    Relay ---|relay-87:orion-remote-h| Orion
 
-    TruckPosBus ---|F-40a-midi:bus:o-in+| Orion
-    TruckPosBus ---|F-30a-midi:bus:c-87| Cyrix
-    TruckPosBus ---|F-20a-midi:bus:m-bat+| MPPT
-    SolarPanel ---|m-pv+/-| MPPT
+    TruckPosBus ---|Fuse-40a-midi:orion-in+| Orion
+    TruckPosBus ---|Fuse-30a-midi:cyrix-87| Cyrix
+    TruckPosBus ---|Fuse-20a-midi:mppt-bat+| MPPT
+    SolarPanel ---|mppt-pv+/-| MPPT
 
-    Orion ---|o-out+:c-30| Cyrix
-    Cyrix ---|c-30:bus:F-30a-midi| HousePosBus
+    Orion ---|orion-out+:cyrix-30| Cyrix
+    Cyrix ---|cyrix-30:Fuse-30a-midi| HousePosBus
 
     %% Negative Returns - Upper Board
-    Orion ---|o-in-/out-:bus| UpperNegBus
-    Cyrix ---|c-86:bus| UpperNegBus
-    MPPT ---|m-bat-:bus| UpperNegBus
-    Relay ---|r-85:bus| UpperNegBus
+    Orion ---|orion-in-/out-| UpperNegBus
+    Cyrix ---|cyrix-86| UpperNegBus
+    MPPT ---|mppt-bat-| UpperNegBus
+    Relay ---|relay-85| UpperNegBus
 
     %% Lower Board Bus Connections
-    XT60_Bat1 ---|bus:bus| HouseNegBus
-    XT60_Bat2 ---|bus:bus| HouseNegBus
-    XT60_Load1 ---|Neg Return| HouseNegBus
-    XT60_Load2 ---|Neg Return| HouseNegBus
+    XT60_Bat1 --- HouseNegBus
+    XT60_Bat2 --- HouseNegBus
+    XT60_Load1 ---|neg-return| HouseNegBus
+    XT60_Load2 ---|neg-return| HouseNegBus
 
     %% Battery and Load Patch Connections
     HouseBat1 ---|xt60-patch| XT60_Bat1
@@ -181,10 +181,10 @@ graph TD
     Fridge ---|xt60-patch| XT60_Load1
     DieselHeater ---|xt60-patch| XT60_Load2
 
-    HousePosBus ---|F-20a-midi:bus:bus| XT60_Bat1
-    HousePosBus ---|F-20a-midi:bus:bus| XT60_Bat2
-    HousePosBus ---|F-20a-midi:bus:bus| XT60_Load1
-    HousePosBus ---|F-20a-midi:bus:bus| XT60_Load2
+    HousePosBus ---|Fuse-20a-midi| XT60_Bat1
+    HousePosBus ---|Fuse-20a-midi| XT60_Bat2
+    HousePosBus ---|Fuse-20a-midi| XT60_Load1
+    HousePosBus ---|Fuse-20a-midi| XT60_Load2
 ```
 
 > [!NOTE]
