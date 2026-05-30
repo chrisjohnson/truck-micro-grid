@@ -4,7 +4,11 @@ This diagram visualizes the physical and logical layout of the electrical system
 
 ```mermaid
 graph TD
-    %% Location Groups
+    %% Source & Exterior Locations
+    subgraph Roof ["Truck Roof"]
+        SolarPanel["200W Solar Panel"]
+    end
+
     subgraph EngineBay ["Engine Bay"]
         StarterBat["Starter Battery<br/><small>(+ / - Lugs)</small>"]
         SW6Relay["Upfitter SW6 Relay<br/><small>(Output Stud)</small>"]
@@ -12,6 +16,7 @@ graph TD
         IgnitionSrc["Upfitter Ignition Bundle"]
     end
 
+    %% Routing Infrastructure
     subgraph FrameRails ["Truck Frame Rails (Under Truck)"]
         PosTJunction["Positive T-Junction Box"]
         NegTJunction["Negative T-Junction Box"]
@@ -28,6 +33,20 @@ graph TD
         BedLights["Custom Bed Lights"]
     end
 
+    %% Central Control & Management
+    subgraph UpperBoard ["Upper Sub-Board (Ceiling)"]
+        TruckPosBus["Truck-Side Pos Bus Bar"]
+        UpperNegBus["Upper Neg Bus Bar"]
+        Orion["Victron Orion DC-DC"]
+        Cyrix["Cyrix-Li-ct Combiner"]
+        MPPT["Victron SmartSolar MPPT"]
+        Relay["5-Pin Logic Relay"]
+        Wago["Wago Logic Splitter"]
+        SolarSwitch["Solar Disable Switch"]
+        LogicFuse["2A Logic Fuse"]
+    end
+
+    %% Distribution & Storage
     subgraph LowerBoard ["Lower Sub-Board (Bed Wall)"]
         Anderson["Anderson Connector"]
         MC4["MC4 Logic Connector"]
@@ -41,25 +60,10 @@ graph TD
         HouseBat2["Goldenmate Battery 2"]
     end
 
+    %% Final Usage Points
     subgraph HouseLoads ["House Loads"]
         Fridge["12V Compressor Fridge"]
         DieselHeater["Diesel Heater"]
-    end
-
-    subgraph UpperBoard ["Upper Sub-Board (Ceiling)"]
-        TruckPosBus["Truck-Side Pos Bus Bar"]
-        UpperNegBus["Upper Neg Bus Bar"]
-        Orion["Victron Orion DC-DC"]
-        Cyrix["Cyrix-Li-ct Combiner"]
-        MPPT["Victron SmartSolar MPPT"]
-        Relay["5-Pin Logic Relay"]
-        Wago["Wago Logic Splitter"]
-        SolarSwitch["Solar Disable Switch"]
-        LogicFuse["2A Logic Fuse"]
-    end
-
-    subgraph Roof ["Truck Roof"]
-        SolarPanel["200W Solar Panel"]
     end
 
     %% Connections with precise terminal labels
