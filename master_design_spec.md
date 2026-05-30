@@ -112,8 +112,8 @@ To supply logic and remote control power safely:
 The logic wires utilize a mix of **18 AWG and 12 AWG OFC primary wire** matching the component terminals.
 
 * **Pin 30 (Common Input Power):** Red wire from the Wago connector (fused at 2A).
-* **Pin 86 (Relay Coil Positive +):** 18 AWG Ignition signal wire coming up from the lower board's MC4 connector (powered by SW6 when ignition is ON).
-* **Pin 85 (Relay Coil Ground -):** Black wire leading directly to the **Upper Common Negative Bus Bar**.
+* **Pin 86 (Relay Coil Positive +):** 18 AWG Orange ignition signal wire coming up from the lower board's MC4 connector (powered by SW6 when ignition is ON).
+* **Pin 85 (Relay Coil Ground -):** Black wire leading directly to the **Upper Common Negative Bus Bar** (Pin 85).
 * **Pin 87a (Normally Closed - NC Output):** Green/Orange wire leading directly to **Terminal 85 (Control)** on the **Cyrix-Li-ct Combiner**.
 * **Pin 87 (Normally Open - NO Output):** Purple/White wire leading to the green **Remote H-Pin Terminal Block** on the **Victron Orion DC-DC Charger**.
 
@@ -187,3 +187,42 @@ The main charging run consists of a **50-foot round-trip run of 8 AWG CCA wire**
 When running the solar panel input wires through the roof gland to the MPPT on the upper board:
 * **Recommended Wire:** Use **10 AWG or 12 AWG PV-rated copper wire** (tray cable). With a max current of $\sim7\text{A}$, this size handles the load with negligible voltage drop and provides excellent weather/UV protection on the roof.
 * **PV Overcurrent Protection:** Because a single 200W solar panel is a current-limited source ($I_{sc} \sim 7\text{A}$), it cannot produce enough current to overload 12 AWG or 10 AWG wire. A PV input fuse is not electrically required, but a **10A or 15A inline MC4 fuse** on the roof-side PV (+) line is recommended as an extra physical safety disconnect.
+
+---
+
+## 9. Comprehensive Point-to-Point Wiring & Connection Schedule
+
+Below is the exhaustive mapping of every wire in the F250 truck bed micro-grid system:
+
+| Wire/Circuit Name | From (Component / Term) | To (Component / Term) | Gauge & Type | Fuse (Type / Rating) | Physical Location & Routing |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Main Engine Pos Highway** | Starter Battery (+) Lug | Tailgate Frame T-Junction Box | 8 AWG CCA | MIDI / 30A | Engine Bay -> Frame Rail under truck |
+| **Main Engine Neg Highway** | Starter Battery (-) Lug | Lower Neg Bus Bar (Lower Board) | 8 AWG CCA | Unfused | Engine Bay -> Frame Rail -> Bed Floor |
+| **Tailgate Branch** | Tailgate Frame T-Junction Box | Tailgate Mini Fuse Panel | 8 AWG CCA | Unfused | Frame Rail -> Tailgate area |
+| **Custom Truck Bed Lights** | Tailgate Mini Fuse Panel | Toggle Switch with always-on LED | 16 AWG OFC | ATO / 5A or 10A | Tailgate interior panel |
+| **Bed Feed Positive** | Tailgate Frame T-Junction Box | Anderson Connector (Input +) | 8 AWG OFC | Unfused | Frame Rail -> bed floor entry point |
+| **Ignition Signal Line** | Upfitter Switch 6 (Cab) | MC4 Connector (Input +) | 18 AWG OFC | OEM SW6 Fuse | Cab -> Frame Rail -> Bed Floor |
+| **Truck-Side Highway Pos** | Anderson Connector (Output +) | Truck-Side Pos Bus Bar (Upper) | 8 AWG OFC | Unfused | Lower Board -> up SmartCap wall |
+| **Chassis Ground Highway** | Lower Neg Bus Bar (Lower) | Upper Neg Bus Bar (Upper) | 8 AWG OFC | Unfused | Lower Board -> up SmartCap wall |
+| **Orion Power Input** | Truck-Side Pos Bus Bar (Upper) | Orion-Tr Smart Input (+) | 8 AWG CCA | MIDI / 40A | Upper Sub-Board |
+| **Cyrix Starter Line** | Truck-Side Pos Bus Bar (Upper) | Cyrix Combiner Terminal 87 | 8 AWG CCA | MIDI / 30A | Upper Sub-Board |
+| **MPPT Power Output** | Victron SmartSolar MPPT Bat (+) | Truck-Side Pos Bus Bar (Upper) | 12 AWG OFC | MIDI / 20A | Upper Sub-Board |
+| **Logic Power Feed** | Truck-Side Pos Bus Bar (Upper) | Wago Connector Input | 18 AWG OFC | Inline Blade / 2A | Upper Sub-Board |
+| **MPPT Solar Disable Switch** | Wago Connector Output | MPPT Remote H-pin (Yellow wire) | 18 AWG OFC | Unfused (In 2A Loop) | Upper Sub-Board |
+| **Relay Pin 30 logic power** | Wago Connector Output | Relay Pin 30 | 18 AWG OFC | Unfused (In 2A Loop) | Upper Sub-Board |
+| **Relay Coil Control** | MC4 Connector Output | Relay Pin 86 | 18 AWG OFC (Orange) | Unfused | MC4 (Lower) -> parallel up wall |
+| **Relay Coil Ground** | Relay Pin 85 | Upper Neg Bus Bar (Upper) | 18 AWG OFC (Black) | Unfused | Upper Sub-Board |
+| **Cyrix Control Terminal** | Relay Pin 87a (NC) | Cyrix Combiner Terminal 85 | 18 AWG OFC (Grn/Org) | Unfused (In 2A Loop) | Upper Sub-Board |
+| **Orion Control Terminal** | Relay Pin 87 (NO) | Orion Remote H-Pin | 18 AWG OFC (Pur/Wht) | Unfused (In 2A Loop) | Upper Sub-Board |
+| **Orion Ground** | Orion Input (-) and Output (-) | Upper Neg Bus Bar (Upper) | 8 AWG CCA | Unfused | Upper Sub-Board |
+| **Cyrix Ground** | Cyrix Combiner Terminal 86 | Upper Neg Bus Bar (Upper) | 18 AWG OFC (Black) | Unfused | Upper Sub-Board |
+| **MPPT Ground** | Victron SmartSolar MPPT Bat (-) | Upper Neg Bus Bar (Upper) | 12 AWG OFC | Unfused | Upper Sub-Board |
+| **Orion Output Jumper** | Orion-Tr Smart Output (+) | Cyrix Combiner Terminal 30 | 8 AWG OFC | Unfused | Upper Sub-Board |
+| **House Charging Highway** | Cyrix Combiner Terminal 30 | House Pos Bus Bar Stud 1 (Lower) | 8 AWG OFC | Unfused (Self-fusing) | Upper Board -> down SmartCap wall |
+| **House Battery 1 Power** | House Pos Bus Bar Stud 2 | XT60 Battery Port 1 | 12 AWG OFC | MIDI / 30A | Lower Sub-Board |
+| **House Battery 2 Power** | House Pos Bus Bar Stud 3 | XT60 Battery Port 2 | 12 AWG OFC | MIDI / 30A | Lower Sub-Board |
+| **House Load Port 1 Power** | House Pos Bus Bar Stud 4 | XT60 Load Port 1 | 12 AWG OFC | MIDI / 20A | Lower Sub-Board |
+| **House Load Port 2 Power** | House Pos Bus Bar Stud 5 | XT60 Load Port 2 | 12 AWG OFC | MIDI / 20A | Lower Sub-Board |
+| **House Battery 1 Patch** | XT60 Battery Port 1 | House Battery 1 Terminal (+) | 12 AWG OFC | Unfused | Bed floor (24-inch XT60 patch) |
+| **House Battery 2 Patch** | XT60 Battery Port 2 | House Battery 2 Terminal (+) | 12 AWG OFC | Unfused | Bed floor (24-inch XT60 patch) |
+| **Solar Panel Input (Future)** | Solar Panel on Roof | Victron SmartSolar MPPT PV (+/-) | 10 or 12 AWG PV | Optional MC4 / 10A-15A | Roof -> Gland -> Upper Board |
