@@ -5,17 +5,16 @@
 
 ---
 
-## 1. System Overview & Parasitic Drain Resolution
+## 1. System Overview & Parasitic Drain Analysis
 
 This system is a dual-battery, solar-assisted 12V DC micro-grid spanning the engine bay, the truck frame, and the truck bed.
 
-### ⚠️ Parasitic Drain Analysis
-In the initial setup, the main 8 AWG power highway to the tailgate was switched by **Upfitter Switch 6 (SW6)**, which was modified to be "hot-at-all-times". 
-* **The Issue:** Leaving SW6 toggled ON to keep the SmartCap lights active when camping kept the factory upfitter relay coil energized continuously. The relay coil draws **$\sim150\text{–}200\text{mA}$** of holding current. This parasitic draw, combined with the truck's factory connectivity modules, drained the starting batteries during short periods of inactivity.
-* **The Resolution:** 
-  1. The main **8 AWG CCA highway** is moved off the Upfitter relay and connected **directly to the starter battery positive terminal** (fused at **30A** in the engine bay).
-  2. The tailgate bus bar is now **always hot**, allowing the custom SmartCap LED light strips (referred to as **truck bed lights**) to run directly off the vehicle starting battery network without upfitter relay coil drain. These custom lights are controlled by a local toggle switch with an always-on LED, which is distinct from the F250's OEM factory bed lights that feature an automatic timeout.
-  3. The SW6 fuse in the engine compartment is restored to its factory **ignition-switched** position. Its low-current output is used purely as an **ignition signal wire (18 AWG)** to trigger the control logic at the tailgate.
+### ⚠️ Parasitic Drain Configuration
+In the current setup, the main 8 AWG CCA power highway to the tailgate T-junction is powered from the output of **Upfitter Switch 6 (SW6)**, which is configured in the engine compartment to be "hot-at-all-times" (always hot).
+* **The Draw (Upfitter Relay Coil):** Leaving the cab's SW6 switch toggled ON to keep the SmartCap lights active when camping keeps the factory upfitter relay coil energized continuously. This relay coil draws **$\sim150\text{–}200\text{mA}$** of holding current. 
+* **The Impact:** This parasitic draw, combined with the truck's factory connectivity modules, will drain the vehicle's single starting battery over 3-4 days of sitting. 
+* **The Operational Workaround:** The user must manually toggle the cab's SW6 switch to **OFF** when the truck is parked and not in use. Turning SW6 OFF de-energizes the relay coil and eliminates the drain, but also cuts all power to the tailgate bus bar and custom bed lights.
+* **Custom vs. OEM Lights:** The custom SmartCap LED light strips (referred to as **truck bed lights**) run off the tailgate fuse panel. These custom lights are controlled by a local switch with an always-on LED, which is distinct from the F250's OEM factory bed lights that feature an automatic timeout. Both systems draw power from the truck's single starter battery.
 
 ---
 
@@ -26,7 +25,7 @@ In the initial setup, the main 8 AWG power highway to the tailgate was switched 
   * *Internal Protection:* Integrated BMS with Low-Voltage Disconnect (LVD) threshold $\le 11.0\text{V}$.
   * *Local Fusing:* Each battery box connects via a **12 AWG 24-inch XT60-to-XT60 cable** to the lower sub-board.
   * *Panel Fusing:* Each house battery XT60 port is individually fused at **30A** on the house positive bus bar.
-* **Starter Bank:** 2024 Ford F250 OEM dual starting battery network.
+* **Starter Bank:** 2024 Ford F250 OEM single lead-acid starting battery.
 * **Solar Array:** 1x Renogy 200W Shadowflux High-Efficiency N-Type Panel.
   * *Max Voltage ($V_{mp}$):* $31.3\text{V}$
   * *Open-Circuit Max Voltage ($V_{oc}$):* $36.5\text{V}$
@@ -45,9 +44,9 @@ In the initial setup, the main 8 AWG power highway to the tailgate was switched 
 To support easy removal of the SmartCap, the system is divided into three distinct zones connected by quick-disconnects.
 
 ```
-                                      [ ENGINE BAY ] 
+                                [ ENGINE BAY (SW6 Relay Box) ] 
                                              │
-                                     (30A MIDI Fuse)
+                                   (40A SW6 JCase Fuse)
                                              │
                              [ 8 AWG CCA Frame Run (Under Truck) ]
                                              │
@@ -196,7 +195,7 @@ Below is the exhaustive mapping of every wire in the F250 truck bed micro-grid s
 
 | Wire/Circuit Name | From (Component / Term) | To (Component / Term) | Gauge & Type | Fuse (Type / Rating) | Physical Location & Routing |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Main Engine Pos Highway** | Starter Battery (+) Lug | Tailgate Frame T-Junction Box | 8 AWG CCA | MIDI / 30A | Engine Bay -> Frame Rail under truck |
+| **Main Engine Pos Highway** | Upfitter SW6 Relay Output Stud | Tailgate Frame T-Junction Box | 8 AWG CCA | SW6 Fuse / 40A | Relay Box -> Frame Rail under truck |
 | **Main Engine Neg Highway** | Starter Battery (-) Lug | Lower Neg Bus Bar (Lower Board) | 8 AWG CCA | Unfused | Engine Bay -> Frame Rail -> Bed Floor |
 | **Tailgate Branch** | Tailgate Frame T-Junction Box | Tailgate Mini Fuse Panel | 8 AWG CCA | Unfused | Frame Rail -> Tailgate area |
 | **Custom Truck Bed Lights** | Tailgate Mini Fuse Panel | Toggle Switch with always-on LED | 16 AWG OFC | ATO / 5A or 10A | Tailgate interior panel |
