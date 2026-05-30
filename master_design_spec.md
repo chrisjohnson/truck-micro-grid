@@ -248,3 +248,34 @@ Below is the exhaustive mapping of every wire in the F250 truck bed micro-grid s
 | **House Battery 1 Patch** | XT60 Battery Port 1 | House Battery 1 Terminal (+) | 12 AWG OFC | Unfused (Protected by Goldenmate BMS overcurrent cutoff) | Bed floor (24-inch XT60 patch) |
 | **House Battery 2 Patch** | XT60 Battery Port 2 | House Battery 2 Terminal (+) | 12 AWG OFC | Unfused (Protected by Goldenmate BMS overcurrent cutoff) | Bed floor (24-inch XT60 patch) |
 | **Solar Panel Input (Future)** | Solar Panel on Roof | Victron SmartSolar MPPT PV (+/-) | 10 or 12 AWG PV | Optional MC4 / 10A-15A | Roof -> Gland -> Upper Board |
+
+---
+
+## 10. Detailed Fuse Audit & Coordination Analysis
+
+To ensure system reliability, each fuse point has been audited for both wire safety and "nuisance trip" risk under real-world operating conditions.
+
+### 🔌 Primary Highway Fuses
+* **40A JCase (Engine Bay):**
+    * *Protection:* Correctly sized for 8 AWG CCA (~45A thermal limit in engine bay).
+    * *Risk:* **Medium.** Simultaneous load (Orion 20A + Tailgate accessories 15A) reaches 88% capacity. Heat-soaking in extreme weather may cause nuisance trips under heavy accessory load.
+* **40A Maxi (Tailgate T-Junction):**
+    * *Coordination:* Branch protection for the Anderson and Tailgate panel.
+    * *Logic:* If a short occurs at the Anderson connector, the 40A Maxi should blow first, preserving power to the Tailgate lights (selective coordination).
+
+### 🎛️ Upper Sub-Board Logic & Charging
+* **30A MIDI (Cyrix Starter-Side):**
+    * *Risk:* **Medium/High.** Charging deeply discharged house batteries via the Cyrix bridge can cause inrush spikes $>35\text{A}$. 
+    * *Mitigation:* **Soft Start Procedure.** If house batteries are low ($<12.0\text{V}$), toggle SW6 OFF before engine start, wait for Orion initialization, then toggle SW6 ON to charge via the managed 18A Orion path.
+* **40A MIDI (Orion Input):**
+    * *Logic:* Sized to handle the "Constant Power" draw of the Orion (~28A at low input voltage) with 30% headroom.
+* **20A MIDI (MPPT Output):**
+    * *Logic:* Sized for 12 AWG OFC. Provides 17% headroom over the 200W panel's theoretical max output (16.6A) to handle "Cloud Edge" solar spikes.
+
+### 🔋 Lower Sub-Board & Battery Isolation
+* **30A MIDI (Stud 1 - House Entry):**
+    * *Risk:* In series with the Cyrix 30A fuse; shared risk of nuisance blow during high-inrush events.
+* **20A MIDI (Stud 2 & 3 - XT60 Battery Ports):**
+    * *Strict Requirement:* **MUST** balance batteries to 100% SoC before connection. Connecting a full battery to a discharged battery will result in an immediate fuse blow due to balancing inrush current.
+* **20A MIDI (Stud 4 & 5 - XT60 Load Ports):**
+    * *Real-World Check:* Sized for diesel heater glow-plug surges (12A) and fridge startup spikes (5A). Extremely low nuisance risk.
