@@ -76,7 +76,7 @@ To support easy removal of the SmartCap, the system is divided into three distin
 ### 🎛️ Sub-Board Details:
 
 #### 1. Lower Sub-Board (Wall above tub lip):
-* **Grounding:** The lower common negative bus bar connects directly to the incoming 8 AWG dedicated negative return run (to the starter battery), the upper common negative bus bar, and the house battery negatives. This system is electrically isolated from the vehicle frame.
+* **Grounding:** The lower common negative bus bar connects directly to the incoming 8 AWG dedicated negative return wire from the Anderson connector. The 8 AWG negative wire leading to the upper board lands on this same terminal (daisy-chained).
 * **Distribution:** Houses the XT60 ports for the house batteries (each fused at **30A**) and load ports (each fused at **20A**).
 * **Charging Path:** The final positive terminal on the house-side bus bar (Stud 1) connects to the **8 AWG OFC House Charging Highway** wire running up to the upper sub-board.
 
@@ -221,13 +221,14 @@ Below is the exhaustive mapping of every wire in the F250 truck bed micro-grid s
 | **Main Engine Pos Highway** | Upfitter SW6 Relay Output Stud | Tailgate Frame T-Junction Box | 8 AWG CCA | SW6 Fuse / 40A | Relay Box -> Frame Rail under truck |
 | **Main Engine Neg Highway** | Starter Battery (-) Lug | Frame Negative T-Junction Box | 8 AWG CCA | Unfused | Dedicated wire run: Engine Bay -> Frame Rail |
 | **Tail Light Neg Branch** | Frame Negative T-Junction Box | Tail Light Negative Bus | 8 AWG CCA | Unfused | Frame Rail -> Tail Light Cavity |
-| **Bed Negative Branch** | Frame Negative T-Junction Box | Lower Neg Bus Bar (Lower Board) | 8 AWG CCA | Unfused | Frame Rail -> Bed Floor |
+| **Bed Negative Branch** | Frame Negative T-Junction Box | Anderson Connector (Input -) | 8 AWG CCA | Unfused | Frame Rail -> Bed Floor |
 | **Tail Light Pos Branch** | Frame Positive T-Junction Box | Tail Light Mini Fuse Panel | 8 AWG CCA | Maxi / 40A (at junction) | Frame Rail -> Tail Light Cavity |
-| **Custom Truck Bed Lights** | Tail Light Mini Fuse Panel | Toggle Switch with always-on LED | 16 AWG OFC | ATO / 5A or 10A | Tail Light Cavity interior |
+| **Custom Truck Bed Lights** | Tail Light Mini Fuse Panel (+) / Neg Bus (-) | LED Strips / Toggle Switch | 16 AWG OFC | ATO / 5A or 10A | Tail Light Cavity interior |
 | **Bed Feed Positive** | Frame Positive T-Junction Box | Anderson Connector (Input +) | 8 AWG OFC | Maxi / 40A (at junction) | Frame Rail -> bed floor entry point |
 | **Ignition Signal Line** | Factory Upfitter Ignition Bundle (Engine Bay) | MC4 Connector (Input +) | 18 AWG OFC (Orange) | OEM Upfitter Fuse (engine bay fuse box) | Engine Bay bundle -> Frame Rail -> Bed Floor |
-| **Truck-Side Highway Pos** | Anderson Connector (Output +) | Truck-Side Pos Bus Bar (Upper) | 8 AWG OFC | Unfused | Lower Board -> up SmartCap wall |
-| **System Negative Highway** | Lower Neg Bus Bar (Lower) | Upper Neg Bus Bar (Upper) | 8 AWG OFC | Unfused | Lower Board -> up SmartCap wall |
+| **Truck-Side Highway Pos** | Anderson Connector (Output +) | Truck-Side Pos Bus Bar (Upper) | 8 AWG OFC | Unfused | Bed Floor -> Upper Sub-Board |
+| **System Negative Highway** | Anderson Connector (Output -) | Lower Neg Bus Bar (Lower) | 8 AWG OFC | Unfused | Bed Floor -> Lower Sub-Board |
+| **Inter-Board Negative** | Lower Neg Bus Bar (Lower) | Upper Neg Bus Bar (Upper) | 8 AWG OFC | Unfused | Lower Board -> up SmartCap wall |
 | **Orion Power Input** | Truck-Side Pos Bus Bar (Upper) | Orion-Tr Smart Input (+) | 8 AWG CCA | MIDI / 40A | Upper Sub-Board |
 | **Cyrix Starter Line** | Truck-Side Pos Bus Bar (Upper) | Cyrix Combiner Terminal 87 | 8 AWG CCA | MIDI / 30A | Upper Sub-Board |
 | **MPPT Power Output** | Victron SmartSolar MPPT Bat (+) | Truck-Side Pos Bus Bar (Upper) | 12 AWG OFC | MIDI / 20A | Upper Sub-Board |

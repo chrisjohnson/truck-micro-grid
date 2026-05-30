@@ -67,12 +67,14 @@ graph TD
     PosHighway --- PosTJunction
     PosTJunction --- Maxi40A_1 --- TailLightFuse --- BedLights
     PosTJunction --- Maxi40A_2 --- Anderson
-
-    Anderson --- TruckPosBus
+    
     NegHighway --- NegTJunction
-    NegTJunction --- TailLightNeg
-    NegTJunction ---|Neg Highway| HouseNegBus
-    HouseNegBus --- UpperNegBus
+    NegTJunction --- TailLightNeg --- BedLights
+    NegTJunction ---|Neg Highway| Anderson
+    
+    Anderson ---|Truck Pos| TruckPosBus
+    Anderson ---|Truck Neg| HouseNegBus
+    HouseNegBus ---|Inter-board Neg| UpperNegBus
     IgnitionHighway --- MC4
     
     MC4 ---|Relay Pin 86| Relay
