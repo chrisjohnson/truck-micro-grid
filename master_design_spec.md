@@ -126,14 +126,14 @@ graph TD
 
     %% Connections with precise terminal labels
     StarterBat --- SW6Relay
-    SW6Relay ---|Fuse-40a-jcase:sw6relay-output| JCase40
+    SW6Relay ---|FUSE-40a-jcase:sw6relay-output| JCase40
     JCase40 ---|pos-hwy| PosHighway
     StarterBat ---|neg-hwy| NegHighway
     IgnitionSrc ---|ign-line| IgnitionHighway
 
     PosHighway --- PosTJunction
-    PosTJunction ---|Fuse-40a-maxi:Fuse-5a-atc| TailLightFuse --- BedLights
-    PosTJunction ---|Fuse-40a-maxi| Anderson
+    PosTJunction ---|FUSE-40a-maxi:FUSE-5a-atc| TailLightFuse --- BedLights
+    PosTJunction ---|FUSE-40a-maxi| Anderson
 
     NegHighway --- NegTJunction
     NegTJunction --- TailLightNeg --- BedLights
@@ -145,7 +145,7 @@ graph TD
     IgnitionHighway --- MC4
 
     MC4 ---|relay-86| Relay
-    TruckPosBus ---|Fuse-2a-atc| LogicFuse
+    TruckPosBus ---|FUSE-2a-atc| LogicFuse
     LogicFuse --- Wago
 
     Wago ---|relay-30| Relay
@@ -155,13 +155,13 @@ graph TD
     Relay ---|relay-87a:cyrix-85| Cyrix
     Relay ---|relay-87:orion-remote-h| Orion
 
-    TruckPosBus ---|Fuse-40a-midi:orion-in+| Orion
-    TruckPosBus ---|Fuse-30a-midi:cyrix-87| Cyrix
-    TruckPosBus ---|Fuse-20a-midi:mppt-bat+| MPPT
+    TruckPosBus ---|FUSE-40a-midi:orion-in+| Orion
+    TruckPosBus ---|FUSE-30a-midi:cyrix-87| Cyrix
+    TruckPosBus ---|FUSE-20a-midi:mppt-bat+| MPPT
     SolarPanel ---|mppt-pv+/-| MPPT
 
     Orion ---|orion-out+:cyrix-30| Cyrix
-    Cyrix ---|cyrix-30:Fuse-30a-midi| HousePosBus
+    Cyrix ---|cyrix-30:FUSE-30a-midi| HousePosBus
 
     %% Negative Returns - Upper Board
     Orion ---|orion-in-/out-| UpperNegBus
@@ -181,10 +181,10 @@ graph TD
     Fridge ---|xt60-patch| XT60_Load1
     DieselHeater ---|xt60-patch| XT60_Load2
 
-    HousePosBus ---|Fuse-20a-midi| XT60_Bat1
-    HousePosBus ---|Fuse-20a-midi| XT60_Bat2
-    HousePosBus ---|Fuse-20a-midi| XT60_Load1
-    HousePosBus ---|Fuse-20a-midi| XT60_Load2
+    HousePosBus ---|FUSE-20a-midi| XT60_Bat1
+    HousePosBus ---|FUSE-20a-midi| XT60_Bat2
+    HousePosBus ---|FUSE-20a-midi| XT60_Load1
+    HousePosBus ---|FUSE-20a-midi| XT60_Load2
 ```
 
 > [!NOTE]
