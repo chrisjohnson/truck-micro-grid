@@ -181,8 +181,8 @@ graph TD
     Fridge ---|xt60-patch| XT60_Load1
     DieselHeater ---|xt60-patch| XT60_Load2
 
-    HousePosBus ---|FUSE-20a-midi| XT60_Bat1
-    HousePosBus ---|FUSE-20a-midi| XT60_Bat2
+    HousePosBus ---|FUSE-30a-midi| XT60_Bat1
+    HousePosBus ---|FUSE-30a-midi| XT60_Bat2
     HousePosBus ---|FUSE-20a-midi| XT60_Load1
     HousePosBus ---|FUSE-20a-midi| XT60_Load2
 ```
@@ -224,10 +224,10 @@ graph TD
   * Battery (-) runs via a **12 AWG wire** to the upper common negative bus bar.
   * *Logic:* Solar power flows through the truck bus bar and the Anderson/T-junction back to charge the F250's starter batteries first.
 * **Combiner (Cyrix) Starter-Side Connection:**
-  * Terminal 87 connects to the truck-side positive bus bar via an **8 AWG CCA wire** (protected by a **30A MIDI fuse**).
+  * Terminal 87 connects to the truck-side positive bus bar via an **8 AWG OFC wire** (protected by a **30A MIDI fuse**).
 * **DC-DC Charger (Orion) Input Connection:**
-  * Input (+) connects to the truck-side positive bus bar via an **8 AWG CCA wire** (protected by a **40A MIDI fuse**).
-  * Input (-) and Output (-) are wired to the upper negative bus bar using **8 AWG CCA**.
+  * Input (+) connects to the truck-side positive bus bar via an **8 AWG OFC wire** (protected by a **40A MIDI fuse**).
+  * Input (-) and Output (-) are wired to the upper negative bus bar using **8 AWG OFC**.
 * **House Highway Conjunction (Cyrix Terminal 30 / Orion Output+):**
   * The **8 AWG OFC House Charging Highway** wire coming up from the lower board lands directly on **Cyrix Terminal 30**.
   * The Orion Output (+) (8 AWG) lands on this same **Cyrix Terminal 30** lug via a local copper jumper.
