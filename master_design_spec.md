@@ -366,8 +366,8 @@ Below is the exhaustive mapping of every wire in the F250 truck bed micro-grid s
 | **Truck-Side Highway Pos** | Anderson Connector (Output +) | Truck-Side Pos Bus Bar (Upper) | 8 AWG OFC | Unfused | Bed Floor -> Upper Sub-Board |
 | **System Negative Highway** | Anderson Connector (Output -) | Lower Neg Bus Bar (Lower) | 8 AWG OFC | Unfused | Bed Floor -> Lower Sub-Board |
 | **Inter-Board Negative** | Lower Neg Bus Bar (Lower) | Upper Neg Bus Bar (Upper) | 8 AWG OFC | Unfused | Lower Board -> up SmartCap wall |
-| **Orion Power Input** | Truck-Side Pos Bus Bar (Upper) | Orion-Tr Smart Input (+) | 8 AWG CCA | MIDI / 40A | Upper Sub-Board |
-| **Cyrix Starter Line** | Truck-Side Pos Bus Bar (Upper) | Cyrix Combiner Terminal 87 | 8 AWG CCA | MIDI / 30A | Upper Sub-Board |
+| **Orion Power Input** | Truck-Side Pos Bus Bar (Upper) | Orion-Tr Smart Input (+) | 8 AWG OFC | MIDI / 40A | Upper Sub-Board |
+| **Cyrix Starter Line** | Truck-Side Pos Bus Bar (Upper) | Cyrix Combiner Terminal 87 | 8 AWG OFC | MIDI / 30A | Upper Sub-Board |
 | **MPPT Power Output** | Victron SmartSolar MPPT Bat (+) | Truck-Side Pos Bus Bar (Upper) | 12 AWG OFC | MIDI / 20A | Upper Sub-Board |
 | **Logic Power Feed** | Truck-Side Pos Bus Bar (Upper) | Wago Connector Input | 18 AWG OFC | Inline Blade / 2A | Upper Sub-Board |
 | **MPPT Solar Disable Switch** | Wago Connector Output | MPPT Remote H-pin (Yellow wire) | 18 AWG OFC | Unfused (In 2A Loop) | Upper Sub-Board |
@@ -419,3 +419,71 @@ To ensure system reliability, each fuse point has been audited for both wire saf
     * *Strict Requirement:* **MUST** balance batteries to 100% SoC before connection. Connecting a full battery to a discharged battery will result in an immediate fuse blow due to balancing inrush current.
 * **20A MIDI (Stud 4 & 5 - XT60 Load Ports):**
     * *Real-World Check:* Sized for diesel heater glow-plug surges (12A) and fridge startup spikes (5A). Extremely low nuisance risk.
+
+## 11. Energy Balance, Parasitic Validation & Ecosystem Physics
+
+This section codifies the mathematical and physical justification for the "Always-ON" Upfitter Switch 6 (SW6) operating philosophy. It proves that the system maintains starting battery health without user intervention under standard driveway and active camping profiles.
+
+### 🔌 Baseline Parasitic Current Modeling
+When the vehicle is stationary and SW6 remains toggled ON in the cab, the system enters an autonomous monitoring state. The baseline power debt is calculated across two distinct physical operational modes:
+
+1. **Solenoid Open Mode (Nighttime / Overcast / Settled State):**
+   * Ford SW6 Factory Relay Coil Continuous Holding Current: 175mA
+   * Victron Cyrix-Li-ct Standby/Sensing Power Consumption: 5mA
+   * Ford F250 OEM Factory Module Idle Sleep Draw: 50mA
+   * SmartCap Interior Local Switch LED Indicator: 25mA
+   * **Total Continuous System Trickle:** 255mA (0.255A)
+   * **24-Hour Energy Debt Capacity:** 0.255A × 24h = **6.12 Ah/day**
+
+2. **Solenoid Closed Mode (Active Solar Generation Window):**
+   * Combined Standby Currents (Relay + Modules + LED): 250mA
+   * Cyrix-Li-ct Magnetic Solenoid Holding Current (Bridged): 220mA
+   * **Total Continuous System Trickle:** 470mA (0.470A)
+
+### ☀️ Regional Solar Generation Modeling (OH / KY / WV)
+The Renogy 200W Shadowflux N-Type panel features a maximum output current ($I_{mp}$) of ~6.4A. Because it is mounted 100% flat on the SmartCap roof, it is modeled with an angular and thermal de-rating factor of 20–30% to account for cosine losses in the Midwest climate.
+
+* **Driveway Profile (Full Sun - Home, OH):**
+  * Average Peak Sun Hours (PSH) Spring–Fall: 3.5 to 5.0 PSH
+  * De-rated Solar Current Matrix: 6.4A × 0.80 = 5.12A realized
+  * **Daily Energy Harvest Range:** 5.12A × 4.0h ≈ **20.48 Ah/day**
+  * **Net Driveway Balance Sheet:** $$20.48\text{ Ah (Inflow)} - 6.12\text{ Ah (Outflow)} = \mathbf{+14.36\text{ Ah Net Surplus/Day}}$$
+  * *Validation:* While parked at home between trips, leaving SW6 toggled ON is 100% sustainable. Solar production aggressively dominates the parasitic load, keeping the F250 single starter battery at a continuous float state while automatically pulsing excess energy through the Cyrix to top up the house bank.
+
+* **Canopy Camping Profile (Deep Shade - WV / KY National Forests):**
+  * Average realized PSH under dense deciduous leaf cover: 0.75 to 1.25 PSH
+  * **Daily Energy Harvest Range:** 6.4A × 1.0h ≈ **6.4 Ah/day**
+  * **Net Canopy Balance Sheet:** Solar harvest matches or slightly trails the 24-hour parasitic baseline, creating a mild net-negative energy state on the truck side.
+
+### 🛡️ The Cyrix Voltage Shield & Cranking Protection
+To fulfill the "Just Works" constraint without manual battery monitoring, the system utilizes the hard operational thresholds of the Cyrix-Li-ct as an automated low-voltage disconnect.
+
+```mermaid
+graph TD
+    subgraph State ["ENGINE OFF / PARKED AT CAMP"]
+        A[Starter Bank Voltage Drops to < 12.8V] --> B(Cyrix Solenoid OPENS)
+    end
+    
+    B --> C[ENGINE BAY / STARTER]
+    B --> D[TRUCK BED / HOUSE]
+    
+    subgraph Left [Truck Side]
+        C --> C1[Ford SW6 Relay Coil 175mA]
+        C --> C2[F250 Idle Modules 50mA]
+        C --> C3[System Isolated at 12.8V]
+        C --> C4[Safe Cranking Reserve Preserved]
+    end
+    
+    subgraph Right [House Side]
+        D --> D1[Goldenmate LiFePO4 Bank]
+        D --> D2[12V Compressor Fridge]
+        D --> D3[Diesel Heater / House Loads]
+        D --> D4[Zero Draw on Starter Bank]
+    end
+```
+
+1. **House Load Isolation:** If the 12V compressor fridge or diesel heater experiences heavy usage while camping under dense canopy, they pull energy directly from the lower sub-board bus bar. As soon as the starter bank drops to **12.8V**, the Cyrix instantly unbridges. The massive house loads are physically quarantined to the Goldenmate LiFePO4 batteries.
+2. **Cranking Reserve Worst-Case Scenario:** If the truck is left parked in absolute shade for a maximum 4-day (96-hour) camping trip and SW6 is forgotten:
+   * Total energy drawn from the starter battery: $0.255\text{A} \times 96\text{ h} = \mathbf{24.48\text{ Ah}}$
+   * The F250's heavy-duty starter battery retains ~75% of its total 100Ah capacity. The 7.3L gas V8 engine retains more than enough cold cranking amps (CCA) to execute a safe start.
+3. **Automatic Recovery:** Once the engine starts, the alternator delivers power down the line, the Orion DC-DC wakes up, and the house bank is safely bulk-charged at a continuous 18A rate independent of solar availability.
