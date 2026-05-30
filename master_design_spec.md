@@ -14,7 +14,7 @@ In the initial setup, the main 8 AWG power highway to the tailgate was switched 
 * **The Issue:** Leaving SW6 toggled ON to keep the SmartCap lights active when camping kept the factory upfitter relay coil energized continuously. The relay coil draws **$\sim150\text{–}200\text{mA}$** of holding current. This parasitic draw, combined with the truck's factory connectivity modules, drained the starting batteries during short periods of inactivity.
 * **The Resolution:** 
   1. The main **8 AWG CCA highway** is moved off the Upfitter relay and connected **directly to the starter battery positive terminal** (fused at **30A** in the engine bay).
-  2. The tailgate bus bar is now **always hot**, allowing the SmartCap lights to run directly off the vehicle battery system without student/relay coil drain.
+  2. The tailgate bus bar is now **always hot**, allowing the custom SmartCap LED light strips (referred to as **truck bed lights**) to run directly off the vehicle starting battery network without upfitter relay coil drain. These custom lights are controlled by a local toggle switch with an always-on LED, which is distinct from the F250's OEM factory bed lights that feature an automatic timeout.
   3. The SW6 fuse in the engine compartment is restored to its factory **ignition-switched** position. Its low-current output is used purely as an **ignition signal wire (18 AWG)** to trigger the control logic at the tailgate.
 
 ---
