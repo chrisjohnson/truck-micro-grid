@@ -13,17 +13,19 @@ graph TD
     end
 
     subgraph FrameRails ["Truck Frame Rails (Under Truck)"]
-        TJunction["T-Junction Box"]
+        PosTJunction["Positive T-Junction Box"]
+        NegTJunction["Negative T-Junction Box"]
         PosHighway["8 AWG Pos Highway"]
         NegHighway["8 AWG Dedicated Neg Highway"]
         IgnitionHighway["18 AWG Ignition Line"]
+        Maxi40A_1["40A Maxi Fuse (Tail Light Branch)"]
+        Maxi40A_2["40A Maxi Fuse (Bed Branch)"]
     end
 
-    subgraph TailgateArea ["Tailgate / Tail Light Area"]
-        TailgateFuse["Tailgate Mini Fuse Panel"]
+    subgraph TailLightArea ["Tail Light Cavity"]
+        TailLightFuse["Tail Light Mini Fuse Panel"]
+        TailLightNeg["Tail Light Neg Bus"]
         BedLights["Custom Bed Lights"]
-        Maxi40A_1["40A Maxi Fuse"]
-        Maxi40A_2["40A Maxi Fuse"]
     end
 
     subgraph LowerBoard ["Lower Sub-Board (Bed Wall)"]
@@ -62,12 +64,15 @@ graph TD
     StarterBat --- NegHighway
     IgnitionSrc --- IgnitionHighway
 
-    PosHighway --- TJunction
-    TJunction --- Maxi40A_1 --- TailgateFuse --- BedLights
-    TJunction --- Maxi40A_2 --- Anderson
+    PosHighway --- PosTJunction
+    PosTJunction --- Maxi40A_1 --- TailLightFuse --- BedLights
+    PosTJunction --- Maxi40A_2 --- Anderson
 
     Anderson --- TruckPosBus
-    NegHighway --- HouseNegBus --- UpperNegBus
+    NegHighway --- NegTJunction
+    NegTJunction --- TailLightNeg
+    NegTJunction ---|Neg Highway| HouseNegBus
+    HouseNegBus --- UpperNegBus
     IgnitionHighway --- MC4
     
     MC4 ---|Relay Pin 86| Relay

@@ -219,10 +219,12 @@ Below is the exhaustive mapping of every wire in the F250 truck bed micro-grid s
 | Wire/Circuit Name | From (Component / Term) | To (Component / Term) | Gauge & Type | Fuse (Type / Rating) | Physical Location & Routing |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Main Engine Pos Highway** | Upfitter SW6 Relay Output Stud | Tailgate Frame T-Junction Box | 8 AWG CCA | SW6 Fuse / 40A | Relay Box -> Frame Rail under truck |
-| **Main Engine Neg Highway** | Starter Battery (-) Lug | Lower Neg Bus Bar (Lower Board) | 8 AWG CCA | Unfused | Dedicated wire run: Engine Bay -> Frame Rail -> Bed Floor |
-| **Tailgate Branch** | Tailgate Frame T-Junction Box | Tailgate Mini Fuse Panel | 8 AWG CCA | Maxi / 40A (at junction) | Frame Rail -> Tailgate area |
-| **Custom Truck Bed Lights** | Tailgate Mini Fuse Panel | Toggle Switch with always-on LED | 16 AWG OFC | ATO / 5A or 10A | Tailgate interior panel |
-| **Bed Feed Positive** | Tailgate Frame T-Junction Box | Anderson Connector (Input +) | 8 AWG OFC | Maxi / 40A (at junction) | Frame Rail -> bed floor entry point |
+| **Main Engine Neg Highway** | Starter Battery (-) Lug | Frame Negative T-Junction Box | 8 AWG CCA | Unfused | Dedicated wire run: Engine Bay -> Frame Rail |
+| **Tail Light Neg Branch** | Frame Negative T-Junction Box | Tail Light Negative Bus | 8 AWG CCA | Unfused | Frame Rail -> Tail Light Cavity |
+| **Bed Negative Branch** | Frame Negative T-Junction Box | Lower Neg Bus Bar (Lower Board) | 8 AWG CCA | Unfused | Frame Rail -> Bed Floor |
+| **Tail Light Pos Branch** | Frame Positive T-Junction Box | Tail Light Mini Fuse Panel | 8 AWG CCA | Maxi / 40A (at junction) | Frame Rail -> Tail Light Cavity |
+| **Custom Truck Bed Lights** | Tail Light Mini Fuse Panel | Toggle Switch with always-on LED | 16 AWG OFC | ATO / 5A or 10A | Tail Light Cavity interior |
+| **Bed Feed Positive** | Frame Positive T-Junction Box | Anderson Connector (Input +) | 8 AWG OFC | Maxi / 40A (at junction) | Frame Rail -> bed floor entry point |
 | **Ignition Signal Line** | Factory Upfitter Ignition Bundle (Engine Bay) | MC4 Connector (Input +) | 18 AWG OFC (Orange) | OEM Upfitter Fuse (engine bay fuse box) | Engine Bay bundle -> Frame Rail -> Bed Floor |
 | **Truck-Side Highway Pos** | Anderson Connector (Output +) | Truck-Side Pos Bus Bar (Upper) | 8 AWG OFC | Unfused | Lower Board -> up SmartCap wall |
 | **System Negative Highway** | Lower Neg Bus Bar (Lower) | Upper Neg Bus Bar (Upper) | 8 AWG OFC | Unfused | Lower Board -> up SmartCap wall |
