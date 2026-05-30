@@ -36,6 +36,9 @@ In the current setup, the main 8 AWG CCA power highway to the tailgate T-junctio
 * **Solar Charge Controller:** Victron SmartSolar MPPT (Mounted on the upper sub-board, wired to the **truck-side** positive bus bar).
 * **Logic Controller:** 5-Pin SPDT Automotive Relay (12V, 30/40A rated).
 
+### Thermal Mitigation Infrastructure:
+* **Orion Heat Spreader:** 1x 1/4" (or 3/8") Solid Aluminum Plate. Cut to extended dimensions to act as a conductive lateral radiator backing behind the horizontally mounted Orion DC-DC charger.
+
 ---
 ## 3. Physical Layout & Wiring Topology
 
@@ -322,10 +325,13 @@ The house batteries and lower sub-board are mounted at the **front of the bed** 
 
 ---
 
-## 7. Mechanical Installation, Mounting & CCA Termination Standards
+## 7. Mechanical Installation, Mounting & Thermal Mitigation Standards
 
-### 🔩 Board Mounting
+### 🔩 Board Mounting & Structural Layout
 * **Upper Sub-Board (SmartCap Ceiling):** Bolted securely to the SmartCap's integrated ceiling **M8 threaded inserts** using lock washers and fender washers to resist vibration during off-roading.
+* **Orion Horizontal Thermal Sandbox:** The Victron Orion-Tr Smart is horizontally flush-mounted to the ceiling panel plywood with its aluminum heat-dissipation fins facing up toward the wood backing. To resolve this structural thermal trap, a **1/4" or 3/8" thick aluminum heat spreader plate** is sandwiched directly between the Orion cooling fins and the plywood board surface. 
+  * *Extended Footprint Radiator Matrix:* The aluminum plate is cut oversized relative to the Orion casing, extending **2 to 3 inches beyond the top and bottom bounds** of the charger body to form lateral conductive cooling wings.
+  * *Dynamic Forced Convection:* When driving, the vehicle's motion activates the SmartCap's integrated roof positive pressure vent, driving massive outside air volume into the bed. This turbulent air stream passes directly over the exposed aluminum spreader wings, continuously pulling away heat drawn conductively through the plate from the fin channels.
 * **Lower Sub-Board (Tub Lip Wall):** Mounted using **4x 66lb rubberized neo-magnets** (providing a total of 264 lbs holding capacity). This holds the board securely against vibration while allowing the entire panel to be removed from the bed wall without drilling holes.
 
 ### 🔌 CCA & Copper Hybrid Termination Protocols
