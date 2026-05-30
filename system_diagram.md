@@ -96,6 +96,18 @@ graph TD
     Orion ---|Orion Out+ > Cyrix Term 30| Cyrix
     Cyrix ---|Cyrix Term 30 > Stud 1| HousePosBus
     
+    %% Negative Returns - Upper Board
+    Orion ---|Orion In-/Out- > Neg Bus| UpperNegBus
+    Cyrix ---|Cyrix Pin 86 > Neg Bus| UpperNegBus
+    MPPT ---|MPPT Bat- > Neg Bus| UpperNegBus
+    Relay ---|Relay Pin 85 > Neg Bus| UpperNegBus
+    
+    %% Negative Returns - Lower Board
+    HouseBat1 ---|Neg Patch| HouseNegBus
+    HouseBat2 ---|Neg Patch| HouseNegBus
+    XT60_Load1 ---|Neg Return| HouseNegBus
+    XT60_Load2 ---|Neg Return| HouseNegBus
+    
     HousePosBus ---|Stud 2| XT60_Bat1 --- HouseBat1
     HousePosBus ---|Stud 3| XT60_Bat2 --- HouseBat2
     HousePosBus ---|Stud 4| XT60_Load1
