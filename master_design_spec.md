@@ -51,6 +51,7 @@ To support easy removal of the SmartCap, the system is divided into three distin
                                              │
                                     (T-Junction Box)
                       ┌──────────────────────┴──────────────────────┐
+                 (40A Maxi Fuse)                               (40A Maxi Fuse)
                       ▼                                             ▼
         [ Tailgate Mini Fuse Panel ]                      [ Anderson Connector (8 AWG OFC) ]
           (SmartCap LED Light Strips)                     [ MC4 Connector (18 AWG Ignition) ]
@@ -110,16 +111,20 @@ To supply logic and remote control power safely:
 The logic wires utilize a mix of **18 AWG and 12 AWG OFC primary wire** matching the component terminals.
 
 * **Pin 30 (Common Input Power):** Red wire from the Wago connector (fused at 2A).
-* **Pin 86 (Relay Coil Positive +):** 18 AWG Orange ignition signal wire coming up from the lower board's MC4 connector (powered by SW6 when ignition is ON).
+* **Pin 86 (Relay Coil Positive +):** 18 AWG Orange wire coming up from the lower board's MC4 connector, tapped from the **factory Ford upfitter ignition signal bundle** in the engine bay (hot only when key is in ON/RUN position, independent of SW6 state).
 * **Pin 85 (Relay Coil Ground -):** Black wire leading directly to the **Upper Common Negative Bus Bar** (Pin 85).
 * **Pin 87a (Normally Closed - NC Output):** Green/Orange wire leading directly to **Terminal 85 (Control)** on the **Cyrix-Li-ct Combiner**.
 * **Pin 87 (Normally Open - NO Output):** Purple/White wire leading to the green **Remote H-Pin Terminal Block** on the **Victron Orion DC-DC Charger**.
 
 ### 🔄 Operational Truth Table
-| Ignition State (SW6) | Relay Pin 30 Connects To | Cyrix Combiner State | Orion DC-DC State | System Behavior |
-| :--- | :--- | :--- | :--- | :--- |
-| **Key OFF / SW6 OFF** | **Pin 87a (NC)** | **Armed / Active** | **Forced OFF** | Solar charges starter battery. When starter hits $>13.4\text{V}$, Cyrix bridges to charge/maintain house bank and run fridge. Disconnects automatically if combined voltage drops below $12.8\text{V}$ (e.g. at night under load). |
-| **Key ON / SW6 ON** | **Pin 87 (NO)** | **Forced OPEN** | **Armed / Active** | Engine running. Alternator charges starter. Orion charges house bank via 18A highway. Cyrix is locked open to prevent alternator overload or bypass loops. |
+
+> [!NOTE]
+> SW6 (always hot) and the ignition key signal are **independent inputs**. SW6 controls the main 8 AWG power highway to the T-junction and is always energized. The relay coil at Pin 86 is triggered solely by the factory upfitter ignition bundle — it is hot only when the key is in the ON/RUN position, regardless of SW6 state.
+
+| Ignition Key State | Relay Coil (Pin 86) | Relay Pin 30 Connects To | Cyrix Combiner State | Orion DC-DC State | System Behavior |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Key OFF** | De-energized | **Pin 87a (NC)** | **Armed / Active** | **Forced OFF** | SW6 highway always hot. Solar charges starter battery. When starter hits $>13.4\text{V}$, Cyrix bridges to charge/maintain house bank and run fridge. Auto-disconnects if combined voltage drops below $12.8\text{V}$ (e.g. at night under load). |
+| **Key ON/RUN** | Energized | **Pin 87 (NO)** | **Forced OPEN** | **Armed / Active** | Alternator charges starter via SW6 highway. Orion charges house bank at 18A. Cyrix is locked open to prevent alternator overload or uncontrolled bypass loops. |
 
 ---
 
@@ -212,10 +217,10 @@ Below is the exhaustive mapping of every wire in the F250 truck bed micro-grid s
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Main Engine Pos Highway** | Upfitter SW6 Relay Output Stud | Tailgate Frame T-Junction Box | 8 AWG CCA | SW6 Fuse / 40A | Relay Box -> Frame Rail under truck |
 | **Main Engine Neg Highway** | Starter Battery (-) Lug | Lower Neg Bus Bar (Lower Board) | 8 AWG CCA | Unfused | Engine Bay -> Frame Rail -> Bed Floor |
-| **Tailgate Branch** | Tailgate Frame T-Junction Box | Tailgate Mini Fuse Panel | 8 AWG CCA | Unfused | Frame Rail -> Tailgate area |
+| **Tailgate Branch** | Tailgate Frame T-Junction Box | Tailgate Mini Fuse Panel | 8 AWG CCA | Maxi / 40A (at junction) | Frame Rail -> Tailgate area |
 | **Custom Truck Bed Lights** | Tailgate Mini Fuse Panel | Toggle Switch with always-on LED | 16 AWG OFC | ATO / 5A or 10A | Tailgate interior panel |
-| **Bed Feed Positive** | Tailgate Frame T-Junction Box | Anderson Connector (Input +) | 8 AWG OFC | Unfused | Frame Rail -> bed floor entry point |
-| **Ignition Signal Line** | Upfitter Switch 6 (Cab) | MC4 Connector (Input +) | 18 AWG OFC | OEM SW6 Fuse | Cab -> Frame Rail -> Bed Floor |
+| **Bed Feed Positive** | Tailgate Frame T-Junction Box | Anderson Connector (Input +) | 8 AWG OFC | Maxi / 40A (at junction) | Frame Rail -> bed floor entry point |
+| **Ignition Signal Line** | Factory Upfitter Ignition Bundle (Engine Bay) | MC4 Connector (Input +) | 18 AWG OFC (Orange) | OEM Upfitter Fuse (engine bay fuse box) | Engine Bay bundle -> Frame Rail -> Bed Floor |
 | **Truck-Side Highway Pos** | Anderson Connector (Output +) | Truck-Side Pos Bus Bar (Upper) | 8 AWG OFC | Unfused | Lower Board -> up SmartCap wall |
 | **Chassis Ground Highway** | Lower Neg Bus Bar (Lower) | Upper Neg Bus Bar (Upper) | 8 AWG OFC | Unfused | Lower Board -> up SmartCap wall |
 | **Orion Power Input** | Truck-Side Pos Bus Bar (Upper) | Orion-Tr Smart Input (+) | 8 AWG CCA | MIDI / 40A | Upper Sub-Board |
