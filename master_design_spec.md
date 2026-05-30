@@ -99,7 +99,7 @@ To support easy removal of the SmartCap, the system is divided into three distin
 
 ---
 
-## 4. Control Logic & Solar Switch Configuration
+## 4. Control Logic & Switch Configurations
 
 ### 🔌 Low-Current Logic Power (2A Blade Fuse & Wago)
 To supply logic and remote control power safely:
@@ -114,14 +114,21 @@ The logic wires utilize a mix of **18 AWG and 12 AWG OFC primary wire** matching
 * **Pin 30 (Common Input Power):** Red wire from the Wago connector (fused at 2A).
 * **Pin 86 (Relay Coil Positive +):** 18 AWG Ignition signal wire coming up from the lower board's MC4 connector (powered by SW6 when ignition is ON).
 * **Pin 85 (Relay Coil Ground -):** Black wire leading directly to the **Upper Common Negative Bus Bar**.
-* **Pin 87a (Normally Closed - NC Output):** Green/Orange wire leading to **Terminal 85 (Control)** on the **Cyrix-Li-ct Combiner**.
+* **Pin 87a (Normally Closed - NC Output):** Green/Orange wire leading to the **Combiner Toggle Switch** (described below).
 * **Pin 87 (Normally Open - NO Output):** Purple/White wire leading to the green **Remote H-Pin Terminal Block** on the **Victron Orion DC-DC Charger**.
 
+### 🎛️ Combiner Toggle Switch (Camp Mode Switch)
+To prevent the Cyrix combiner solenoid from drawing continuous holding current ($\sim220\text{–}300\text{mA}$) at night when not camping, or when the vehicle is parked long-term:
+* A low-current toggle switch is placed inline with the **Green/Orange wire** running from SPDT Relay Pin 87a to **Cyrix Terminal 85**.
+* **Switch OFF (Daily/Storage Mode):** Disconnects the Cyrix control logic. The Cyrix is forced open and completely disabled. Solar charging is restricted *only* to the starting batteries. There is zero risk of starter battery depletion from combiner coil draw or backfeeding house loads.
+* **Switch ON (Camp Mode):** Arms the Cyrix control logic. The system behaves automatically, bridging to charge the house batteries once starting batteries are topped off ($>13.4\text{V}$), keeping camp loads (fridge) running.
+
 ### 🔄 Operational Truth Table
-| Ignition State (SW6) | Relay Coil | Pin 30 Connects To | Cyrix Combiner State | Orion DC-DC State | System Behavior |
+| Ignition State (SW6) | Combiner Switch | Relay Pin 30 Connects To | Cyrix Combiner State | Orion DC-DC State | System Behavior |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Key OFF / SW6 OFF** | De-energized | **Pin 87a (NC)** | **Armed / Active** | **Forced OFF** | Solar charges truck starting battery; when starting bank voltage hits $>13.4\text{V}$, Cyrix bridges to charge/maintain house bank. SmartCap lights run directly off starter bank without relay coil drain. |
-| **Key ON / SW6 ON** | Energized | **Pin 87 (NO)** | **Forced OPEN** | **Armed / Active** | The Cyrix control bridge is broken. Orion wakes up and outputs a clean, stable 18A to the house bank from the alternator run. |
+| **Key OFF / SW6 OFF** | **OFF** | **Pin 87a (NC)** | **Forced OPEN** | **Forced OFF** | Daily/Storage. Solar maintains starter batteries. House bank is completely isolated. Zero standby draw from Cyrix coil. |
+| **Key OFF / SW6 OFF** | **ON** | **Pin 87a (NC)** | **Armed / Active** | **Forced OFF** | Camp Mode. Solar charges starter; once starter hits $>13.4\text{V}$, Cyrix bridges to charge house bank and run fridge. Disconnects automatically if combined voltage drops below $12.8\text{V}$ at night. |
+| **Key ON / SW6 ON** | **Either** | **Pin 87 (NO)** | **Forced OPEN** | **Armed / Active** | Engine running. Alternator charges starter. Orion charges house bank via 18A highway. Cyrix is locked open to prevent bypass loops. |
 
 ---
 
