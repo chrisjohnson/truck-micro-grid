@@ -155,12 +155,28 @@ Charging Hwy     Battery 1       Battery 2        Port 1          Port 2
 
 ## 6. System Physics & Impedance Verification
 
-### The 50-Foot Circuit Loop Impedance
-The main charging run consists of a **50-foot round-trip run of 8 AWG CCA wire** along the frame, transitioning to **8 AWG OFC wire** into the bed, and terminating at the sub-boards.
-* **Total Loop Resistance:** **$\sim0.08\ \Omega$** (lowered by the use of 8 AWG OFC for the bed/SmartCap runs, pigtails, and low-resistance Anderson connectors).
-* **Current-Limiting Safety Profile:** Due to this line resistance, Ohm's Law limits the maximum current that can transfer between the starter and house batteries during unmanaged balancing loops:
+### 🔌 Main Charging & Combiner Highway Loop Impedance
+The main charging circuit runs from the engine bay along the frame rail, splits at the T-junction, and runs up the SmartCap wall to the upper sub-board:
+* **The Wire Run Components:**
+  * **Frame Rail Section:** 50-foot round-trip loop of **8 AWG CCA** wire. (Resistance: $\sim0.05\ \Omega$).
+  * **SmartCap Vertical Section:** 15-foot round-trip loop of **8 AWG OFC** wire (from T-junction box up to the upper sub-board, representing $\sim1.5\times$ the frame-to-ceiling height). (Resistance: $\sim0.009\ \Omega$).
+  * **Connection Overhead:** Anderson connector, fuses, and crimped lug contact resistances. (Resistance: $\sim0.015\ \Omega$).
+* **Total Loop Resistance:** **$\sim0.08\ \Omega$** total.
+* **Current-Limiting Safety Profile:** Due to this line resistance, Ohm's Law limits the maximum current that can transfer between the starting battery and house batteries during unmanaged balancing loops:
   $$\Delta V = 30\text{A} \times 0.08\ \Omega = 2.4\text{V}$$
 * **Nuisance Tripping Prevention:** To draw a fuse-blowing 30A from the starting bank during a Cyrix bridge event, the house bank voltage would have to sit below $11.0\text{V}$ ($13.4\text{V} - 2.4\text{V} = 11.0\text{V}$). Because the Goldenmate internal BMS activates its low-voltage cut-off at $\le 11.0\text{V}$, nuisance fuse-blowing from battery-to-battery balancing inrushes is physically impossible.
+
+### ❄️ House Bank-to-Fridge Load Circuit
+The house batteries and lower sub-board are mounted at the **front of the bed** (wall above tub lip), while the fridge sits at the **back of the bed** (near the tailgate).
+* **The Wire Run:** A 16-foot round-trip loop of **12 AWG pure copper** wire connects the lower sub-board's XT60 load port to the fridge.
+* **Loop Resistance:** 12 AWG copper wire has a resistance of $\sim1.6\ \Omega$ per 1,000 feet.
+  $$R_{loop} = 16\text{ ft} \times 0.0016\ \Omega/\text{ft} \approx 0.026\ \Omega$$
+* **Voltage Drop Analysis:**
+  * **Fridge Startup Surge ($\sim5\text{A}$ transient spike):** 
+    $$\Delta V_{surge} = 5\text{A} \times 0.026\ \Omega = 0.13\text{V}\ \text{drop}\ (0.98\%)$$
+  * **Continuous Running Draw ($\sim1.5\text{A}$ compressor load):**
+    $$\Delta V_{run} = 1.5\text{A} \times 0.026\ \Omega = 0.039\text{V}\ \text{drop}\ (0.3\%)$$
+* **Conclusion:** The voltage drop is negligible ($\le1\%$). The 12 AWG copper run is perfectly sized to deliver clean, stable 12V DC power from the front of the bed to the fridge at the tailgate without triggering low-voltage warnings on the fridge compressor controller.
 
 ---
 
