@@ -322,21 +322,24 @@ The house batteries and lower sub-board are mounted at the **front of the bed** 
 
 ---
 
-## 7. Mechanical Installation & Mounting Standards
+## 7. Mechanical Installation, Mounting & CCA Termination Standards
 
 ### 🔩 Board Mounting
 * **Upper Sub-Board (SmartCap Ceiling):** Bolted securely to the SmartCap's integrated ceiling **M8 threaded inserts** using lock washers and fender washers to resist vibration during off-roading.
 * **Lower Sub-Board (Tub Lip Wall):** Mounted using **4x 66lb rubberized neo-magnets** (providing a total of 264 lbs holding capacity). This holds the board securely against vibration while allowing the entire panel to be removed from the bed wall without drilling holes.
 
-### 🔌 Termination Standards:
-  * **High-Current Terminals (Victron Orion):** **MUST** utilize bootlace ferrules on all wires entering screw-down terminals. This ensures maximum surface contact and prevents "Error 26" (Terminal Overheated) caused by vibration-induced high resistance.
-  * **Heavy-Gauge Wires (8 AWG):** Utilize pure copper heavy-duty lugs terminated with a **hydraulic hex-crimper**.
-  * **Small-Gauge Wires (18 AWG / 12 AWG):** Utilize premium mini ring terminals or ferrules as appropriate.
-  * **Short-Circuit Protection:** All positive lugs are protected with **adhesive-lined heat shrink tubing** for complete isolation.
+### 🔌 CCA & Copper Hybrid Termination Protocols
+Because the upper sub-board and vertical umbilical pathways utilize Copper-Clad Aluminum (CCA), specific mechanical precautions are mandatory to counteract aluminum metal creep (cold flow under pressure) and galvanic oxidation in humid environments:
 
-### 🔋 Battery Commissioning & Maintenance Standards
+* **Oxide Inhibitor Mandate:** Every bare stripped wire end of a CCA conductor **MUST** be thoroughly coated with a zinc-based anti-oxidant joint compound (e.g., *Noalox* or *Ideal AI-Barrier*) immediately before insertion into any crimp lug, ferrule, or terminal block. This seals out oxygen and humidity to prevent the formation of highly resistive aluminum oxide skins.
+* **High-Current Terminals (Victron Orion):** **MUST** utilize bootlace ferrules on all wires entering screw-down tension blocks. Bare CCA strands must never be placed directly under a set screw, as the clamping force will shear the soft aluminum strands. Ferrules must be square- or hex-crimped to maximize surface contact area.
+* **Heavy-Gauge Umbilicals & Lugs (8 AWG):** Heavy-duty lugs must be explicitly rated for aluminum/copper transitions (or tin-plated pure copper) and terminated using a **hydraulic hex-crimper** to cold-weld the wire bundle. Hand-squeezing or dimple-crimping CCA will leave internal voids that accelerate corrosion.
+* **Short-Circuit Isolation:** All positive lugs are protected with heavy-wall, adhesive-lined polyolefin heat shrink tubing to seal out moisture and provide physical stress relief against mechanical shearing.
+
+### 🔋 Battery Commissioning & Preventive Maintenance Standards
 * **Parallel Balancing:** Before connecting the house batteries to the lower sub-board XT60 ports, both batteries **MUST** be charged to 100% State of Charge (SoC) independently. 
 * **Visual Labeling:** A permanent visual reminder ("UNITS MUST BE BALANCED TO 100% BEFORE CONNECTION") is mounted adjacent to the XT60 Battery Ports to prevent accidental "Fuse Racing" or BMS trips during hot-swapping.
+* **The 6-Month Mechanical Torque Audit:** Due to the physical property of aluminum to slowly creep or deform under continuous mechanical load and trail vibration, all screw terminals on the Orion block and bus bars must be checked and re-torqued to spec exactly 6 months after deployment, and annually thereafter.
 
 ---
 
