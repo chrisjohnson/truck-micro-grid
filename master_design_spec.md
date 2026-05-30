@@ -22,7 +22,7 @@ In the current setup, the main 8 AWG CCA power highway to the tailgate T-junctio
 ### Power Sources & Buffers:
 * **House Bank (Removable):** 2x Goldenmate 100Ah Lithium Iron Phosphate (LiFePO4) batteries (sit on the truck bed floor).
   * *Internal Protection:* Integrated BMS with Low-Voltage Disconnect (LVD) threshold $\le 11.0\text{V}$.
-  * *Local Fusing:* Each battery box connects via a **12 AWG 24-inch XT60-to-XT60 cable** to the lower sub-board.
+  * *Local Fusing:* Each battery box connects via a **12 AWG 30-inch XT60-to-XT60 cable** to the lower sub-board.
   * *Panel Fusing:* Each house battery XT60 port is individually fused at **30A** on the house positive bus bar.
 * **Starter Bank:** 2024 Ford F250 OEM single lead-acid starting battery.
 * **Solar Array:** 1x Renogy 200W Shadowflux High-Efficiency N-Type Panel.
@@ -190,7 +190,7 @@ graph TD
 > [!NOTE]
 > **Implementation Notes:**
 > * **Isolated Grounding:** The 8 AWG Dedicated Neg Highway runs directly from the Starter Battery to the Lower Neg Bus Bar, bypassing the vehicle chassis.
-> * **Fusing Logic:** House battery XT60 ports are fused at 20A (Conservative) with 30A spares available for high-inrush scenarios.
+> * **Fusing Logic:** House battery XT60 ports are fused at 30A for high-inrush scenarios.
 > * **Interlocking Relay:** The 5-Pin relay alternates between the Cyrix (Solar/Stationary) and Orion (Alternator/Driving) based on the Upfitter Ignition signal.
 
 ```
@@ -274,7 +274,7 @@ The lower sub-board house positive bus bar distributes charging current and hand
       _______________________/_______|_____________________________________
      |               |               |               |               |
  [ STUD 1 ]      [ STUD 2 ]      [ STUD 3 ]      [ STUD 4 ]      [ STUD 5 ]
-   (Input)         (20A)           (20A)           (20A)           (20A)
+   (Input)         (30A)           (30A)           (20A)           (20A)
      |               |               |               |               |
   Incoming       XT60 House      XT60 House       XT60 Load       XT60 Load
 Charging Hwy     Battery 1       Battery 2        Port 1          Port 2
@@ -283,11 +283,11 @@ Charging Hwy     Battery 1       Battery 2        Port 1          Port 2
 ### 🎛️ Board Configuration
 * **Stud 1: House Charging Highway (MIDI / 30A - at this stud)**
   * *Wiring:* 8 AWG OFC positive wire running down from Cyrix Terminal 30 on the upper board. The 30A MIDI fuse is placed here at the lower bus bar entry point, protecting the full wire run from fault current flowing up from the house batteries. Upper-board sources (Orion, Cyrix starter-side) are independently current-limited by their own fuses.
-* **Stud 2: XT60 House Battery 1 (20A Fuse)**
-  * *Wiring:* 12 AWG pure copper pigtail to XT60 port. Connected to battery box via a 24" 12 AWG XT60-to-XT60 patch cable.
-  * *Protection Chain:* 20A MIDI fuse protects the 12 AWG pigtail and XT60 port wiring. The 24" patch cable between the port and the battery terminal is protected from battery-side shorts by the Goldenmate BMS internal overcurrent cutoff.
-* **Stud 3: XT60 House Battery 2 (20A Fuse)**
-  * *Wiring:* 12 AWG pure copper pigtail to XT60 port. Connected to battery box via a 24" 12 AWG XT60-to-XT60 patch cable.
+* **Stud 2: XT60 House Battery 1 (30A Fuse)**
+  * *Wiring:* 12 AWG pure copper pigtail to XT60 port. Connected to battery box via a 30" 12 AWG XT60-to-XT60 patch cable.
+  * *Protection Chain:* 30A MIDI fuse protects the 12 AWG pigtail and XT60 port wiring. The 30" patch cable between the port and the battery terminal is protected from battery-side shorts by the Goldenmate BMS internal overcurrent cutoff.
+* **Stud 3: XT60 House Battery 2 (30A Fuse)**
+  * *Wiring:* 12 AWG pure copper pigtail to XT60 port. Connected to battery box via a 30" 12 AWG XT60-to-XT60 patch cable.
   * *Protection Chain:* Same as Stud 2. Cross-battery isolation is enforced because inter-battery balancing current must pass through *both* Stud 2 and Stud 3 fuses to cross-feed.
 * **Stud 4: XT60 Load Port 1 (20A Fuse)**
   * *Wiring:* 12 AWG pure copper. (Camper fridge or diesel heater).
@@ -381,12 +381,12 @@ Below is the exhaustive mapping of every wire in the F250 truck bed micro-grid s
 | **MPPT Ground** | Victron SmartSolar MPPT Bat (-) | Upper Neg Bus Bar (Upper) | 12 AWG OFC | Unfused | Upper Sub-Board |
 | **Orion Output Jumper** | Orion-Tr Smart Output (+) | Cyrix Combiner Terminal 30 | 8 AWG OFC | Unfused | Upper Sub-Board |
 | **House Charging Highway** | Cyrix Combiner Terminal 30 | House Pos Bus Bar Stud 1 (Lower) | 8 AWG OFC | MIDI / 30A (at Stud 1, lower board) | Upper Board -> down SmartCap wall |
-| **House Battery 1 Power** | House Pos Bus Bar Stud 2 | XT60 Battery Port 1 | 12 AWG OFC | MIDI / 20A | Lower Sub-Board |
-| **House Battery 2 Power** | House Pos Bus Bar Stud 3 | XT60 Battery Port 2 | 12 AWG OFC | MIDI / 20A | Lower Sub-Board |
+| **House Battery 1 Power** | House Pos Bus Bar Stud 2 | XT60 Battery Port 1 | 12 AWG OFC | MIDI / 30A | Lower Sub-Board |
+| **House Battery 2 Power** | House Pos Bus Bar Stud 3 | XT60 Battery Port 2 | 12 AWG OFC | MIDI / 30A | Lower Sub-Board |
 | **House Load Port 1 Power** | House Pos Bus Bar Stud 4 | XT60 Load Port 1 | 12 AWG OFC | MIDI / 20A | Lower Sub-Board |
 | **House Load Port 2 Power** | House Pos Bus Bar Stud 5 | XT60 Load Port 2 | 12 AWG OFC | MIDI / 20A | Lower Sub-Board |
-| **House Battery 1 Patch** | XT60 Battery Port 1 | House Battery 1 Terminal (+) | 12 AWG OFC | Unfused (Protected by Goldenmate BMS overcurrent cutoff) | Bed floor (24-inch XT60 patch) |
-| **House Battery 2 Patch** | XT60 Battery Port 2 | House Battery 2 Terminal (+) | 12 AWG OFC | Unfused (Protected by Goldenmate BMS overcurrent cutoff) | Bed floor (24-inch XT60 patch) |
+| **House Battery 1 Patch** | XT60 Battery Port 1 | House Battery 1 Terminal (+) | 12 AWG OFC | Unfused (Protected by Goldenmate BMS overcurrent cutoff) | Bed floor (30-inch XT60 patch) |
+| **House Battery 2 Patch** | XT60 Battery Port 2 | House Battery 2 Terminal (+) | 12 AWG OFC | Unfused (Protected by Goldenmate BMS overcurrent cutoff) | Bed floor (30-inch XT60 patch) |
 | **Solar Panel Input (Future)** | Solar Panel on Roof | Victron SmartSolar MPPT PV (+/-) | 10 or 12 AWG PV | Optional MC4 / 10A-15A | Roof -> Gland -> Upper Board |
 
 ---
@@ -415,7 +415,7 @@ To ensure system reliability, each fuse point has been audited for both wire saf
 ### 🔋 Lower Sub-Board & Battery Isolation
 * **30A MIDI (Stud 1 - House Entry):**
     * *Risk:* In series with the Cyrix 30A fuse; shared risk of nuisance blow during high-inrush events.
-* **20A MIDI (Stud 2 & 3 - XT60 Battery Ports):**
+* **30A MIDI (Stud 2 & 3 - XT60 Battery Ports):**
     * *Strict Requirement:* **MUST** balance batteries to 100% SoC before connection. Connecting a full battery to a discharged battery will result in an immediate fuse blow due to balancing inrush current.
 * **20A MIDI (Stud 4 & 5 - XT60 Load Ports):**
     * *Real-World Check:* Sized for diesel heater glow-plug surges (12A) and fridge startup spikes (5A). Extremely low nuisance risk.
@@ -487,3 +487,21 @@ graph TD
    * Total energy drawn from the starter battery: $0.255\text{A} \times 96\text{ h} = \mathbf{24.48\text{ Ah}}$
    * The F250's heavy-duty starter battery retains ~75% of its total 100Ah capacity. The 7.3L gas V8 engine retains more than enough cold cranking amps (CCA) to execute a safe start.
 3. **Automatic Recovery:** Once the engine starts, the alternator delivers power down the line, the Orion DC-DC wakes up, and the house bank is safely bulk-charged at a continuous 18A rate independent of solar availability.
+
+## 12. Accepted Project Technical Debt & Infrastructure Constraints
+
+This section formalizes the deliberate design compromises, legacy infrastructure choices, and accepted technical debt within the micro-grid ecosystem. These constraints are mathematically accounted for and monitored to ensure overall system safety without requiring immediate physical retrofits.
+
+### 🔌 1. Legacy Frame Rail Infrastructure (8 AWG CCA Run)
+The primary high-current transmission path spanning the engine bay to the tailgate T-junction consists of a 50-foot round-trip loop of **8 AWG Copper-Clad Aluminum (CCA)** wire. 
+* **The Trade-Off:** CCA possesses higher linear resistance ($\sim0.05\ \Omega$ loop) and lower overall current capacity compared to an identical run of Oxygen-Free Copper (OFC). It is also mechanically stiffer and more susceptible to expansion/contraction tracking under severe environmental thermal cycles.
+* **Mitigation & Justification:** This infrastructure is accepted as fixed project debt due to the extensive labor and routing architecture already deployed under the truck chassis. Primary protection is strictly enforced by the 40A JCase fuse in the engine compartment. System voltage-drop math confirms that the inherent resistance of this CCA loop serves as a passive physical current limiter during unmanaged engine-bay bridging events. If continuous nuisance fuse-tripping occurs under extreme thermal/load conditions, this run will be scheduled for a wholesale upgrade to 8 AWG OFC.
+
+### 🔋 2. House Battery Connection Standardization (XT60 & 12 AWG Architecture)
+The removable Goldenmate 100Ah LiFePO4 battery boxes utilize an enclosure standard built around internal and external **XT60 connection ports paired with 12 AWG OFC primary wiring**. The total physical path length between the lower positive sub-board bus bar and the true internal battery terminal is approximately 34 inches, broken by a modular male/female XT60 patch cable interface.
+* **The Trade-Off:** Standardizing on a compact, high-density RC connection format restricts maximum individual envelope current transfers compared to heavy eyelet lugs and 8 AWG terminations. 
+* **Fusing Validation (30A MIDI Migration):** To prevent continuous thermal fatigue and eliminate nuisance trips during coupled high-demand surges (e.g., parallel load matching during fridge compressor ignition and diesel heater glow-plug startup), Stud 2 and Stud 3 on the lower sub-board are populated with **30A MIDI fuses**. 
+* **Safety Factor Verification:** 1. 12 AWG OFC chassis wiring safely maintains a thermal current capacity rating up to 35A–40A in this run length.
+  2. Genuine XT60 connectors are rated for 30A continuous / 60A transient peak.
+  3. Under normal 18A Orion charging profiles, the current splits across both balanced parallel paths (~9A per box), rendering a 30A fuse completely structurally safe while preserving rapid-clear overcurrent fault protection if a catastrophic internal battery pack short occurs.
+* **Operational Dependency:** The user accepts that the absolute enforcement of the 100% SoC Parallel Balancing Rule (Section 7) is the primary line of defense against instantaneous double-fuse failures at these ports during hot-swapping maneuvers.
