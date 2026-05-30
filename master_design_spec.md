@@ -7,7 +7,7 @@
 
 ## 1. System Overview & Parasitic Drain Analysis
 
-This system is a dual-battery, solar-assisted 12V DC micro-grid spanning the engine bay, the truck frame, and the truck bed.
+This system is a dual-battery, solar-assisted 12V DC micro-grid spanning the engine bay, the truck frame rails (for routing only), and the truck bed. It utilizes a **dedicated negative return highway** directly to the starter battery to ensure complete electrical isolation from the truck's chassis.
 
 ### ⚠️ Parasitic Drain & Solar Offset Strategy
 In the current setup, the main 8 AWG CCA power highway to the tailgate T-junction is powered from the output of **Upfitter Switch 6 (SW6)**, which is configured in the engine compartment to be "hot-at-all-times" (always hot).
@@ -76,7 +76,7 @@ To support easy removal of the SmartCap, the system is divided into three distin
 ### 🎛️ Sub-Board Details:
 
 #### 1. Lower Sub-Board (Wall above tub lip):
-* **Grounding:** The lower common negative bus bar connects directly to the incoming 8 AWG starting battery ground run, the upper common negative bus bar, and the house battery negatives.
+* **Grounding:** The lower common negative bus bar connects directly to the incoming 8 AWG dedicated negative return run (to the starter battery), the upper common negative bus bar, and the house battery negatives. This system is electrically isolated from the vehicle frame.
 * **Distribution:** Houses the XT60 ports for the house batteries (each fused at **30A**) and load ports (each fused at **20A**).
 * **Charging Path:** The final positive terminal on the house-side bus bar (Stud 1) connects to the **8 AWG OFC House Charging Highway** wire running up to the upper sub-board.
 
@@ -137,20 +137,21 @@ The lower sub-board house positive bus bar distributes charging current and hand
       _______________________/_______|_____________________________________
      |               |               |               |               |
  [ STUD 1 ]      [ STUD 2 ]      [ STUD 3 ]      [ STUD 4 ]      [ STUD 5 ]
-   (Input)         (30A)           (30A)           (20A)           (20A)
+   (Input)         (20A)           (20A)           (20A)           (20A)
      |               |               |               |               |
   Incoming       XT60 House      XT60 House       XT60 Load       XT60 Load
 Charging Hwy     Battery 1       Battery 2        Port 1          Port 2
 ```
 
 ### 🎛️ Board Configuration
-* **Stud 1: House Charging Highway (No Local Fuse - Fed by Upper Board)**
-  * *Wiring:* 8 AWG OFC positive wire running down from Cyrix Terminal 30 on the upper board.
-* **Stud 2: XT60 House Battery 1 (30A Fuse)**
+* **Stud 1: House Charging Highway (MIDI / 30A - at this stud)**
+  * *Wiring:* 8 AWG OFC positive wire running down from Cyrix Terminal 30 on the upper board. The 30A MIDI fuse is placed here at the lower bus bar entry point, protecting the full wire run from fault current flowing up from the house batteries. Upper-board sources (Orion, Cyrix starter-side) are independently current-limited by their own fuses.
+* **Stud 2: XT60 House Battery 1 (20A Fuse)**
   * *Wiring:* 12 AWG pure copper pigtail to XT60 port. Connected to battery box via a 24" 12 AWG XT60-to-XT60 patch cable.
-* **Stud 3: XT60 House Battery 2 (30A Fuse)**
+  * *Protection Chain:* 20A MIDI fuse protects the 12 AWG pigtail and XT60 port wiring. The 24" patch cable between the port and the battery terminal is protected from battery-side shorts by the Goldenmate BMS internal overcurrent cutoff.
+* **Stud 3: XT60 House Battery 2 (20A Fuse)**
   * *Wiring:* 12 AWG pure copper pigtail to XT60 port. Connected to battery box via a 24" 12 AWG XT60-to-XT60 patch cable.
-  * *Safety Guardrail:* Cross-battery isolation is enforced because inter-battery balancing current must pass through *both* Stud 2 and Stud 3 fuses to cross-feed.
+  * *Protection Chain:* Same as Stud 2. Cross-battery isolation is enforced because inter-battery balancing current must pass through *both* Stud 2 and Stud 3 fuses to cross-feed.
 * **Stud 4: XT60 Load Port 1 (20A Fuse)**
   * *Wiring:* 12 AWG pure copper. (Camper fridge or diesel heater).
 * **Stud 5: XT60 Load Port 2 (20A Fuse)**
@@ -191,13 +192,15 @@ The house batteries and lower sub-board are mounted at the **front of the bed** 
 * **Upper Sub-Board (SmartCap Ceiling):** Bolted securely to the SmartCap's integrated ceiling **M8 threaded inserts** using lock washers and fender washers to resist vibration during off-roading.
 * **Lower Sub-Board (Tub Lip Wall):** Mounted using **4x 66lb rubberized neo-magnets** (providing a total of 264 lbs holding capacity). This holds the board securely against vibration while allowing the entire panel to be removed from the bed wall without drilling holes.
 
-### 🔌 Wire Management & Route Dressing
-* **Wall Runs:** Wires running between the lower and upper sub-boards are dressed along the SmartCap wall using **strong routing magnets** to keep them secure and flat against the shell.
-* **External Protection:** All wires running along the F250 frame-rail and within the engine bay are **100% protected in corrugated wire loom** to guard against abrasion, heat, and road debris.
-* **Termination Standards:**
-  * Heavy-gauge wires (8 AWG) utilize pure copper heavy-duty lugs terminated with a **hydraulic hex-crimper**.
-  * Small-gauge wires (18 AWG / 12 AWG) utilize premium mini ring terminals.
-  * All positive lugs are protected with **adhesive-lined heat shrink tubing** for complete short-circuit isolation.
+### 🔌 Termination Standards:
+  * **High-Current Terminals (Victron Orion):** **MUST** utilize bootlace ferrules on all wires entering screw-down terminals. This ensures maximum surface contact and prevents "Error 26" (Terminal Overheated) caused by vibration-induced high resistance.
+  * **Heavy-Gauge Wires (8 AWG):** Utilize pure copper heavy-duty lugs terminated with a **hydraulic hex-crimper**.
+  * **Small-Gauge Wires (18 AWG / 12 AWG):** Utilize premium mini ring terminals or ferrules as appropriate.
+  * **Short-Circuit Protection:** All positive lugs are protected with **adhesive-lined heat shrink tubing** for complete isolation.
+
+### 🔋 Battery Commissioning & Maintenance Standards
+* **Parallel Balancing:** Before connecting the house batteries to the lower sub-board XT60 ports, both batteries **MUST** be charged to 100% State of Charge (SoC) independently. 
+* **Visual Labeling:** A permanent visual reminder ("UNITS MUST BE BALANCED TO 100% BEFORE CONNECTION") is mounted adjacent to the XT60 Battery Ports to prevent accidental "Fuse Racing" or BMS trips during hot-swapping.
 
 ---
 
@@ -216,13 +219,13 @@ Below is the exhaustive mapping of every wire in the F250 truck bed micro-grid s
 | Wire/Circuit Name | From (Component / Term) | To (Component / Term) | Gauge & Type | Fuse (Type / Rating) | Physical Location & Routing |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Main Engine Pos Highway** | Upfitter SW6 Relay Output Stud | Tailgate Frame T-Junction Box | 8 AWG CCA | SW6 Fuse / 40A | Relay Box -> Frame Rail under truck |
-| **Main Engine Neg Highway** | Starter Battery (-) Lug | Lower Neg Bus Bar (Lower Board) | 8 AWG CCA | Unfused | Engine Bay -> Frame Rail -> Bed Floor |
+| **Main Engine Neg Highway** | Starter Battery (-) Lug | Lower Neg Bus Bar (Lower Board) | 8 AWG CCA | Unfused | Dedicated wire run: Engine Bay -> Frame Rail -> Bed Floor |
 | **Tailgate Branch** | Tailgate Frame T-Junction Box | Tailgate Mini Fuse Panel | 8 AWG CCA | Maxi / 40A (at junction) | Frame Rail -> Tailgate area |
 | **Custom Truck Bed Lights** | Tailgate Mini Fuse Panel | Toggle Switch with always-on LED | 16 AWG OFC | ATO / 5A or 10A | Tailgate interior panel |
 | **Bed Feed Positive** | Tailgate Frame T-Junction Box | Anderson Connector (Input +) | 8 AWG OFC | Maxi / 40A (at junction) | Frame Rail -> bed floor entry point |
 | **Ignition Signal Line** | Factory Upfitter Ignition Bundle (Engine Bay) | MC4 Connector (Input +) | 18 AWG OFC (Orange) | OEM Upfitter Fuse (engine bay fuse box) | Engine Bay bundle -> Frame Rail -> Bed Floor |
 | **Truck-Side Highway Pos** | Anderson Connector (Output +) | Truck-Side Pos Bus Bar (Upper) | 8 AWG OFC | Unfused | Lower Board -> up SmartCap wall |
-| **Chassis Ground Highway** | Lower Neg Bus Bar (Lower) | Upper Neg Bus Bar (Upper) | 8 AWG OFC | Unfused | Lower Board -> up SmartCap wall |
+| **System Negative Highway** | Lower Neg Bus Bar (Lower) | Upper Neg Bus Bar (Upper) | 8 AWG OFC | Unfused | Lower Board -> up SmartCap wall |
 | **Orion Power Input** | Truck-Side Pos Bus Bar (Upper) | Orion-Tr Smart Input (+) | 8 AWG CCA | MIDI / 40A | Upper Sub-Board |
 | **Cyrix Starter Line** | Truck-Side Pos Bus Bar (Upper) | Cyrix Combiner Terminal 87 | 8 AWG CCA | MIDI / 30A | Upper Sub-Board |
 | **MPPT Power Output** | Victron SmartSolar MPPT Bat (+) | Truck-Side Pos Bus Bar (Upper) | 12 AWG OFC | MIDI / 20A | Upper Sub-Board |
@@ -237,11 +240,11 @@ Below is the exhaustive mapping of every wire in the F250 truck bed micro-grid s
 | **Cyrix Ground** | Cyrix Combiner Terminal 86 | Upper Neg Bus Bar (Upper) | 18 AWG OFC (Black) | Unfused | Upper Sub-Board |
 | **MPPT Ground** | Victron SmartSolar MPPT Bat (-) | Upper Neg Bus Bar (Upper) | 12 AWG OFC | Unfused | Upper Sub-Board |
 | **Orion Output Jumper** | Orion-Tr Smart Output (+) | Cyrix Combiner Terminal 30 | 8 AWG OFC | Unfused | Upper Sub-Board |
-| **House Charging Highway** | Cyrix Combiner Terminal 30 | House Pos Bus Bar Stud 1 (Lower) | 8 AWG OFC | Unfused (Self-fusing) | Upper Board -> down SmartCap wall |
-| **House Battery 1 Power** | House Pos Bus Bar Stud 2 | XT60 Battery Port 1 | 12 AWG OFC | MIDI / 30A | Lower Sub-Board |
-| **House Battery 2 Power** | House Pos Bus Bar Stud 3 | XT60 Battery Port 2 | 12 AWG OFC | MIDI / 30A | Lower Sub-Board |
+| **House Charging Highway** | Cyrix Combiner Terminal 30 | House Pos Bus Bar Stud 1 (Lower) | 8 AWG OFC | MIDI / 30A (at Stud 1, lower board) | Upper Board -> down SmartCap wall |
+| **House Battery 1 Power** | House Pos Bus Bar Stud 2 | XT60 Battery Port 1 | 12 AWG OFC | MIDI / 20A | Lower Sub-Board |
+| **House Battery 2 Power** | House Pos Bus Bar Stud 3 | XT60 Battery Port 2 | 12 AWG OFC | MIDI / 20A | Lower Sub-Board |
 | **House Load Port 1 Power** | House Pos Bus Bar Stud 4 | XT60 Load Port 1 | 12 AWG OFC | MIDI / 20A | Lower Sub-Board |
 | **House Load Port 2 Power** | House Pos Bus Bar Stud 5 | XT60 Load Port 2 | 12 AWG OFC | MIDI / 20A | Lower Sub-Board |
-| **House Battery 1 Patch** | XT60 Battery Port 1 | House Battery 1 Terminal (+) | 12 AWG OFC | Unfused | Bed floor (24-inch XT60 patch) |
-| **House Battery 2 Patch** | XT60 Battery Port 2 | House Battery 2 Terminal (+) | 12 AWG OFC | Unfused | Bed floor (24-inch XT60 patch) |
+| **House Battery 1 Patch** | XT60 Battery Port 1 | House Battery 1 Terminal (+) | 12 AWG OFC | Unfused (Protected by Goldenmate BMS overcurrent cutoff) | Bed floor (24-inch XT60 patch) |
+| **House Battery 2 Patch** | XT60 Battery Port 2 | House Battery 2 Terminal (+) | 12 AWG OFC | Unfused (Protected by Goldenmate BMS overcurrent cutoff) | Bed floor (24-inch XT60 patch) |
 | **Solar Panel Input (Future)** | Solar Panel on Roof | Victron SmartSolar MPPT PV (+/-) | 10 or 12 AWG PV | Optional MC4 / 10A-15A | Roof -> Gland -> Upper Board |
