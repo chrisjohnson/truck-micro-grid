@@ -514,3 +514,49 @@ The Victron Orion-Tr Smart is a non-isolated charger featuring a shared internal
 * **Victron Smart Software Calibration:** To account for this $\sim0.15\text{V}$ shift when dialing in the system via Bluetooth, the following software compensations are applied within the VictronConnect app parameters:
   1. *Victron Orion Input Voltage Lock-out:* Set to 12.7V (instead of 12.5V) to guarantee clean engine shutdown detection despite the elevated ground reference.
   2. *Victron SmartSolar MPPT:* Bulk and Float charge targets are shifted upward by $+0.1\text{V}$ to ensure true terminal voltages are achieved at the lower panel during simultaneous solar/alternator charging windows.
+
+## 13. Non-Default App Programming & Software Configurations
+
+This section formalizes the custom programming targets required within the VictronConnect app interface. These overrides actively compensate for the accepted project infrastructure debts (Section 12), ensuring optimal coordination across varying seasonal profiles.
+
+### 🔌 1. Victron Orion-Tr Smart 12/12-18A Settings
+By default, the Orion ships in "Power Supply" mode. It must be toggled to **"Charger"** mode immediately. Because it operates over the 50-foot 8 AWG CCA highway run, its voltage-sensing parameters must be explicitly de-rated to prevent premature engine-shutdown cycling.
+
+#### ⚙️ Engine Shutdown Detection (Advanced Settings)
+* **Alternator Type:** Smart Alternator
+* **Start Voltage:** `14.0V`
+  * *Justification:* The Ford 7.3L Godzilla smart alternator rests the starting battery at $\sim13.5\text{V}$ but spikes to $\sim14.5\text{V}$ upon crank. A 14.0V target ensures the Orion only pulls power when the alternator is spinning.
+* **Delayed Start Voltage:** `13.5V`
+* **Delayed Start Voltage Delay:** `60 seconds`
+* **Shutdown Voltage:** `13.1V`
+  * *Justification:* Raised slightly from the factory default ($13.0\text{V}$) to account for the voltage drop across the 8 AWG CCA highway under load. This guarantees the Orion shuts down cleanly when the truck engine turns off, preventing starting bank draw down.
+
+#### ⚙️ Input Voltage Lock-Out Settings
+* **Input Voltage Lock-Out:** Enabled
+* **Lock-out Threshold (Under-Voltage):** `12.7V`
+  * *Justification:* Crucial non-default override. Compensates for the $\sim0.15\text{V}$ upper-board ground shift (Section 12.3) caused by common-mode noise. If the ground shifts up, a lower lock-out would bleed too deep into the starting battery's reserve capacity before tripping.
+* **Restart Threshold:** `13.2V`
+
+#### 🔋 Charge Profile Settings (User-Defined Custom)
+* **Absorption Voltage:** `14.4V` (Adaptive, Max Duration: `2 hours`)
+* **Float Voltage:** `13.5V`
+* **Re-bulk Voltage Offset:** `0.10V` (Initiates re-bulk if house bank drops below $13.4\text{V}$)
+
+---
+
+### ☀️ 2. Victron SmartSolar MPPT Settings
+Because your 200W panel is flat-mounted and wired directly to the *truck-side* positive bus bar, its primary directive is floating the starting battery at home while maintaining the armed logic circuits. 
+
+#### 🔋 Battery & Charge Optimization Parameters
+* **Battery Preset:** User-Defined (Do not use "Smart Lithium" default due to target offsets)
+* **Max Charge Current:** `20A` (Full controller capacity)
+* **Absorption Voltage:** `14.5V` 
+  * *Justification:* Shifted upward by **$+0.1\text{V}$** over standard lithium parameters. This offsets the shared vertical negative wire voltage drop during active windows, ensuring that the true voltage hitting the battery boxes resolves to a perfect $14.4\text{V}$.
+* **Float Voltage:** `13.6V`
+  * *Justification:* Boosted slightly above standard $13.5\text{V}$ lithium float profiles. Since the solar array hits the lead-acid starting battery first, this slightly higher float target keeps the lead-acid bank properly saturated and counteracts the baseline $175\text{mA}$ SW6 upfitter relay coil debt.
+* **Equalization Charge:** Disabled (Ensure toggle is physically grayed out; equalization will destroy LiFePO4 chemistry)
+
+#### ❄️ Low-Temperature Cut-off Behavior
+* **Low-Temperature Cut-off:** `Disabled`
+  * *Justification:* Because the MPPT is wired to the *truck-side* positive bus bar, its local temperature sensor measures the canopy/ceiling climate. If left enabled, freezing winter temperatures in Ohio would cause the MPPT to stop generating entirely. This would cut off the solar-maintenance loop to your starter battery. 
+  * *Safety Override:* The Goldenmate battery boxes contain their own internal hardware BMS units with independent Low-Temperature Disconnects ($\le 32^\circ\text{F}\ / \ 0^\circ\text{C}$). If the canopy freezes, the solar panel can safely continue maintaining the lead-acid starter battery, while the lower battery boxes protect themselves via their built-in BMS switches.
