@@ -9,11 +9,10 @@
 
 This system is a dual-battery, solar-assisted 12V DC micro-grid spanning the engine bay, the truck frame, and the truck bed.
 
-### ⚠️ Parasitic Drain Configuration
+### ⚠️ Parasitic Drain & Solar Offset Strategy
 In the current setup, the main 8 AWG CCA power highway to the tailgate T-junction is powered from the output of **Upfitter Switch 6 (SW6)**, which is configured in the engine compartment to be "hot-at-all-times" (always hot).
-* **The Draw (Upfitter Relay Coil):** Leaving the cab's SW6 switch toggled ON to keep the SmartCap lights active when camping keeps the factory upfitter relay coil energized continuously. This relay coil draws **$\sim150\text{–}200\text{mA}$** of holding current. 
-* **The Impact:** This parasitic draw, combined with the truck's factory connectivity modules, will drain the vehicle's single starting battery over 3-4 days of sitting. 
-* **The Operational Workaround:** The user must manually toggle the cab's SW6 switch to **OFF** when the truck is parked and not in use. Turning SW6 OFF de-energizes the relay coil and eliminates the drain, but also cuts all power to the tailgate bus bar and custom bed lights.
+* **The Draw (Upfitter Relay Coil):** Leaving the cab's SW6 switch toggled ON keeps the factory upfitter relay coil energized continuously. This relay coil draws **$\sim150\text{–}200\text{mA}$** of holding current.
+* **The Strategy (Solar Offset):** Rather than toggling SW6 off, the design strategy is to **leave SW6 toggled ON 24/7** so that the tailgate bus bar and custom bed lights are always active. The continuous draw of the upfitter relay coil ($\sim150\text{–}200\text{mA}$), the Cyrix combiner solenoid when bridged ($\sim220\text{–}300\text{mA}$), and the F250's factory idle draw are intended to be fully offset by the daily energy harvest of the 200W solar panel (which prioritizes keeping the starter battery topped up).
 * **Custom vs. OEM Lights:** The custom SmartCap LED light strips (referred to as **truck bed lights**) run off the tailgate fuse panel. These custom lights are controlled by a local switch with an always-on LED, which is distinct from the F250's OEM factory bed lights that feature an automatic timeout. Both systems draw power from the truck's single starter battery.
 
 ---
