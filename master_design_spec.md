@@ -52,7 +52,7 @@ To support easy removal of the SmartCap, the system is divided into three distin
                       ┌──────────────────────┴──────────────────────┐
                  (40A Maxi Fuse)                               (40A Maxi Fuse)
                       ▼                                             ▼
-        [ Tail Light Mini Fuse Panel ]                  [ Anderson Connector (8 AWG OFC) ]
+        [ Tail Light Mini Fuse Panel ]                  [ Anderson Connector (8 AWG CCA) ]
           (SmartCap LED Light Strips)                   [ MC4 Connector (18 AWG Ignition) ]
                                                                     │
                                                            [ LOWER SUB-BOARD ]
@@ -198,7 +198,7 @@ graph TD
                                                                     │
                                                  ┌──────────────────┴──────────────────┐
                                                  ▼                                     ▼
-                                       (8 AWG OFC + 18 AWG Run)              (House Positive Bus Bar)
+                                       (8 AWG CCA + 18 AWG Run)              (House Positive Bus Bar)
                                        (Runs up the SmartCap wall)             │─ 30A Fuse -> XT60 Port 1 (Battery 1)
                                                  │                             │─ 30A Fuse -> XT60 Port 2 (Battery 2)
                                                  ▼                             │─ 20A Fuse -> XT60 Load 1 (Fridge/Heat)
@@ -218,19 +218,19 @@ graph TD
 * **Charging Path:** The final positive terminal on the house-side bus bar (Stud 1) connects to the **8 AWG OFC House Charging Highway** wire running up to the upper sub-board.
 
 #### 2. Upper Sub-Board (SmartCap Ceiling):
-* **Truck-Side Positive Bus Bar:** Connects to the incoming always-hot 8 AWG OFC positive line from the Anderson connector.
+* **Truck-Side Positive Bus Bar:** Connects to the incoming always-hot 8 AWG CCA positive line from the Anderson connector.
 * **Solar Controller (MPPT) Connections:**
-  * Battery (+) runs via a **12 AWG wire** to the truck-side positive bus bar (protected by a **20A MIDI fuse**).
-  * Battery (-) runs via a **12 AWG wire** to the upper common negative bus bar.
+  * Battery (+) runs via a **12 AWG CCA wire** to the truck-side positive bus bar (protected by a **20A MIDI fuse**).
+  * Battery (-) runs via a **12 AWG CCA wire** to the upper common negative bus bar.
   * *Logic:* Solar power flows through the truck bus bar and the Anderson/T-junction back to charge the F250's starter batteries first.
 * **Combiner (Cyrix) Starter-Side Connection:**
   * Terminal 87 connects to the truck-side positive bus bar via an **8 AWG OFC wire** (protected by a **30A MIDI fuse**).
 * **DC-DC Charger (Orion) Input Connection:**
-  * Input (+) connects to the truck-side positive bus bar via an **8 AWG OFC wire** (protected by a **40A MIDI fuse**).
-  * Input (-) and Output (-) are wired to the upper negative bus bar using **8 AWG OFC**.
+  * Input (+) connects to the truck-side positive bus bar via an **8 AWG CCA wire** (protected by a **40A MIDI fuse**).
+  * Input (-) and Output (-) are wired to the upper negative bus bar using **8 AWG CCA**.
 * **House Highway Conjunction (Cyrix Terminal 30 / Orion Output+):**
   * The **8 AWG OFC House Charging Highway** wire coming up from the lower board lands directly on **Cyrix Terminal 30**.
-  * The Orion Output (+) (8 AWG) lands on this same **Cyrix Terminal 30** lug via a local copper jumper.
+  * The Orion Output (+) (8 AWG CCA) lands on this same **Cyrix Terminal 30** lug via a local copper jumper.
   * *Logic:* Power flowing from either the Orion (engine running) or the Cyrix (solar active & starter battery $> 13.4\text{V}$) feeds directly into Cyrix Terminal 30 and travels down the 8 AWG OFC wire to the house positive bus bar.
 
 ---
@@ -302,7 +302,7 @@ Charging Hwy     Battery 1       Battery 2        Port 1          Port 2
 The main charging circuit runs from the engine bay along the frame rail, splits at the T-junction, and runs up the SmartCap wall to the upper sub-board:
 * **The Wire Run Components:**
   * **Frame Rail Section:** 50-foot round-trip loop of **8 AWG CCA** wire. (Resistance: $\sim0.05\ \Omega$).
-  * **SmartCap Vertical Section:** 15-foot round-trip loop of **8 AWG OFC** wire (from T-junction box up to the upper sub-board, representing $\sim1.5\times$ the frame-to-ceiling height). (Resistance: $\sim0.009\ \Omega$).
+  * **SmartCap Vertical Section:** 15-foot round-trip loop of **8 AWG CCA** wire (from T-junction box up to the upper sub-board, representing $\sim1.5\times$ the frame-to-ceiling height). (Resistance: $\sim0.015\ \Omega$).
   * **Connection Overhead:** Anderson connector, fuses, and crimped lug contact resistances. (Resistance: $\sim0.015\ \Omega$).
 * **Total Loop Resistance:** **$\sim0.08\ \Omega$** total.
 * **Current-Limiting Safety Profile:** Due to this line resistance, Ohm's Law limits the maximum current that can transfer between the starting battery and house batteries during unmanaged balancing loops:
@@ -315,8 +315,7 @@ The house batteries and lower sub-board are mounted at the **front of the bed** 
 * **Loop Resistance:** 12 AWG copper wire has a resistance of $\sim1.6\ \Omega$ per 1,000 feet.
   $$R_{loop} = 16\text{ ft} \times 0.0016\ \Omega/\text{ft} \approx 0.026\ \Omega$$
 * **Voltage Drop Analysis:**
-  * **Fridge Startup Surge ($\sim5\text{A}$ transient spike):** 
-    $$\Delta V_{surge} = 5\text{A} \times 0.026\ \Omega = 0.13\text{V}\ \text{drop}\ (0.98\%)$$
+  * **Fridge Startup Surge ($\sim5\text{A}$ transient spike):** $$\Delta V_{surge} = 5\text{A} \times 0.026\ \Omega = 0.13\text{V}\ \text{drop}\ (0.98\%)$$
   * **Continuous Running Draw ($\sim1.5\text{A}$ compressor load):**
     $$\Delta V_{run} = 1.5\text{A} \times 0.026\ \Omega = 0.039\text{V}\ \text{drop}\ (0.3\%)$$
 * **Conclusion:** The voltage drop is negligible ($\le1\%$). The 12 AWG copper run is perfectly sized to deliver clean, stable 12V DC power from the front of the bed to the fridge at the tailgate without triggering low-voltage warnings on the fridge compressor controller.
@@ -363,12 +362,12 @@ Below is the exhaustive mapping of every wire in the F250 truck bed micro-grid s
 | **Custom Truck Bed Lights** | Tail Light Mini Fuse Panel (+) / Neg Bus (-) | LED Strips / Toggle Switch | 16 AWG OFC | ATO / 5A or 10A | Tail Light Cavity interior |
 | **Bed Feed Positive** | Frame Positive T-Junction Box | Anderson Connector (Input +) | 8 AWG OFC | Maxi / 40A (at junction) | Frame Rail -> bed floor entry point |
 | **Ignition Signal Line** | Factory Upfitter Ignition Bundle (Engine Bay) | MC4 Connector (Input +) | 18 AWG OFC (Orange) | OEM Upfitter Fuse (engine bay fuse box) | Engine Bay bundle -> Frame Rail -> Bed Floor |
-| **Truck-Side Highway Pos** | Anderson Connector (Output +) | Truck-Side Pos Bus Bar (Upper) | 8 AWG OFC | Unfused | Bed Floor -> Upper Sub-Board |
-| **System Negative Highway** | Anderson Connector (Output -) | Lower Neg Bus Bar (Lower) | 8 AWG OFC | Unfused | Bed Floor -> Lower Sub-Board |
-| **Inter-Board Negative** | Lower Neg Bus Bar (Lower) | Upper Neg Bus Bar (Upper) | 8 AWG OFC | Unfused | Lower Board -> up SmartCap wall |
-| **Orion Power Input** | Truck-Side Pos Bus Bar (Upper) | Orion-Tr Smart Input (+) | 8 AWG OFC | MIDI / 40A | Upper Sub-Board |
+| **Truck-Side Highway Pos** | Anderson Connector (Output +) | Truck-Side Pos Bus Bar (Upper) | 8 AWG CCA | Unfused | Bed Floor -> Upper Sub-Board |
+| **System Negative Highway** | Anderson Connector (Output -) | Lower Neg Bus Bar (Lower) | 8 AWG CCA | Unfused | Bed Floor -> Lower Sub-Board |
+| **Inter-Board Negative** | Lower Neg Bus Bar (Lower) | Upper Neg Bus Bar (Upper) | 8 AWG CCA | Unfused | Lower Board -> up SmartCap wall |
+| **Orion Power Input** | Truck-Side Pos Bus Bar (Upper) | Orion-Tr Smart Input (+) | 8 AWG CCA | MIDI / 40A | Upper Sub-Board |
 | **Cyrix Starter Line** | Truck-Side Pos Bus Bar (Upper) | Cyrix Combiner Terminal 87 | 8 AWG OFC | MIDI / 30A | Upper Sub-Board |
-| **MPPT Power Output** | Victron SmartSolar MPPT Bat (+) | Truck-Side Pos Bus Bar (Upper) | 12 AWG OFC | MIDI / 20A | Upper Sub-Board |
+| **MPPT Power Output** | Victron SmartSolar MPPT Bat (+) | Truck-Side Pos Bus Bar (Upper) | 12 AWG CCA | MIDI / 20A | Upper Sub-Board |
 | **Logic Power Feed** | Truck-Side Pos Bus Bar (Upper) | Wago Connector Input | 18 AWG OFC | Inline Blade / 2A | Upper Sub-Board |
 | **MPPT Solar Disable Switch** | Wago Connector Output | MPPT Remote H-pin (Yellow wire) | 18 AWG OFC | Unfused (In 2A Loop) | Upper Sub-Board |
 | **Relay Pin 30 logic power** | Wago Connector Output | Relay Pin 30 | 18 AWG OFC | Unfused (In 2A Loop) | Upper Sub-Board |
@@ -378,8 +377,8 @@ Below is the exhaustive mapping of every wire in the F250 truck bed micro-grid s
 | **Orion Control Terminal** | Relay Pin 87 (NO) | Orion Remote H-Pin | 18 AWG OFC (Pur/Wht) | Unfused (In 2A Loop) | Upper Sub-Board |
 | **Orion Ground** | Orion Input (-) and Output (-) | Upper Neg Bus Bar (Upper) | 8 AWG CCA | Unfused | Upper Sub-Board |
 | **Cyrix Ground** | Cyrix Combiner Terminal 86 | Upper Neg Bus Bar (Upper) | 18 AWG OFC (Black) | Unfused | Upper Sub-Board |
-| **MPPT Ground** | Victron SmartSolar MPPT Bat (-) | Upper Neg Bus Bar (Upper) | 12 AWG OFC | Unfused | Upper Sub-Board |
-| **Orion Output Jumper** | Orion-Tr Smart Output (+) | Cyrix Combiner Terminal 30 | 8 AWG OFC | Unfused | Upper Sub-Board |
+| **MPPT Ground** | Victron SmartSolar MPPT Bat (-) | Upper Neg Bus Bar (Upper) | 12 AWG CCA | Unfused | Upper Sub-Board |
+| **Orion Output Jumper** | Orion-Tr Smart Output (+) | Cyrix Combiner Terminal 30 | 8 AWG CCA | Unfused | Upper Sub-Board |
 | **House Charging Highway** | Cyrix Combiner Terminal 30 | House Pos Bus Bar Stud 1 (Lower) | 8 AWG OFC | MIDI / 30A (at Stud 1, lower board) | Upper Board -> down SmartCap wall |
 | **House Battery 1 Power** | House Pos Bus Bar Stud 2 | XT60 Battery Port 1 | 12 AWG OFC | MIDI / 30A | Lower Sub-Board |
 | **House Battery 2 Power** | House Pos Bus Bar Stud 3 | XT60 Battery Port 2 | 12 AWG OFC | MIDI / 30A | Lower Sub-Board |
@@ -410,7 +409,7 @@ To ensure system reliability, each fuse point has been audited for both wire saf
 * **40A MIDI (Orion Input):**
     * *Logic:* Sized to handle the "Constant Power" draw of the Orion (~28A at low input voltage) with 30% headroom.
 * **20A MIDI (MPPT Output):**
-    * *Logic:* Sized for 12 AWG OFC. Provides 17% headroom over the 200W panel's theoretical max output (16.6A) to handle "Cloud Edge" solar spikes.
+    * *Logic:* Sized for 12 AWG CCA. Provides 17% headroom over the 200W panel's theoretical max output (16.6A) to handle "Cloud Edge" solar spikes.
 
 ### 🔋 Lower Sub-Board & Battery Isolation
 * **30A MIDI (Stud 1 - House Entry):**
@@ -492,10 +491,10 @@ graph TD
 
 This section formalizes the deliberate design compromises, legacy infrastructure choices, and accepted technical debt within the micro-grid ecosystem. These constraints are mathematically accounted for and monitored to ensure overall system safety without requiring immediate physical retrofits.
 
-### 🔌 1. Legacy Frame Rail Infrastructure (8 AWG CCA Run)
-The primary high-current transmission path spanning the engine bay to the tailgate T-junction consists of a 50-foot round-trip loop of **8 AWG Copper-Clad Aluminum (CCA)** wire. 
-* **The Trade-Off:** CCA possesses higher linear resistance ($\sim0.05\ \Omega$ loop) and lower overall current capacity compared to an identical run of Oxygen-Free Copper (OFC). It is also mechanically stiffer and more susceptible to expansion/contraction tracking under severe environmental thermal cycles.
-* **Mitigation & Justification:** This infrastructure is accepted as fixed project debt due to the extensive labor and routing architecture already deployed under the truck chassis. Primary protection is strictly enforced by the 40A JCase fuse in the engine compartment. System voltage-drop math confirms that the inherent resistance of this CCA loop serves as a passive physical current limiter during unmanaged engine-bay bridging events. If continuous nuisance fuse-tripping occurs under extreme thermal/load conditions, this run will be scheduled for a wholesale upgrade to 8 AWG OFC.
+### 🔌 1. Legacy Frame Rail Infrastructure & Vertical Canopy Routing (8 AWG CCA Runs)
+The primary high-current transmission path spanning the engine bay to the tailgate T-junction, along with the vertical umbilical runs from the bed floor up to the ceiling panel, consists of **8 AWG Copper-Clad Aluminum (CCA)** wire. 
+* **The Trade-Off:** CCA possesses higher linear resistance and lower overall current capacity compared to an identical run of Oxygen-Free Copper (OFC). It is also mechanically stiffer and more susceptible to expansion/contraction tracking under severe environmental thermal cycles.
+* **Mitigation & Justification:** This infrastructure is accepted as fixed project debt due to the extensive labor and routing architecture already deployed under the truck chassis and within the canopy walls. Primary protection is strictly enforced by the 40A JCase fuse in the engine compartment. System voltage-drop math confirms that the inherent resistance of this CCA loop serves as a passive physical current limiter during unmanaged engine-bay bridging events. If continuous nuisance fuse-tripping occurs under extreme thermal/load conditions, this run will be scheduled for a wholesale upgrade to 8 AWG OFC.
 
 ### 🔋 2. House Battery Connection Standardization (XT60 & 12 AWG Architecture)
 The removable Goldenmate 100Ah LiFePO4 battery boxes utilize an enclosure standard built around internal and external **XT60 connection ports paired with 12 AWG OFC primary wiring**. The total physical path length between the lower positive sub-board bus bar and the true internal battery terminal is approximately 34 inches, broken by a modular male/female XT60 patch cable interface.
@@ -506,21 +505,21 @@ The removable Goldenmate 100Ah LiFePO4 battery boxes utilize an enclosure standa
   3. Under normal 18A Orion charging profiles, the current splits across both balanced parallel paths (~9A per box), rendering a 30A fuse completely structurally safe while preserving rapid-clear overcurrent fault protection if a catastrophic internal battery pack short occurs.
 * **Operational Dependency:** The user accepts that the absolute enforcement of the 100% SoC Parallel Balancing Rule (Section 7) is the primary line of defense against instantaneous double-fuse failures at these ports during hot-swapping maneuvers.
 
-### ⚡ 3. Non-Isolated DC-DC Ground Shift & Common-Mode Noise
-The Victron Orion-Tr Smart is a non-isolated charger featuring a shared internal negative current plate. Because the high-current charging return path (~28A alternator draw) shares the single 8 AWG vertical Inter-Board Negative wire spanning the lower and upper bus bars, an intentional common-mode ground shift ($\sim0.1\text{V}$ to $0.15\text{V}$) is accepted on the upper board during active driving cycles.
-* **The Trade-Off:** The upper negative bus bar momentarily floats slightly above true battery ground while the vehicle alternator is actively bulk-charging the house bank. This skews the local ground reference for any monitoring electronics sharing that ceiling panel.
+### ⚡ 3. Non-Isolated DC-DC Ground Shift & Common-Mode Noise (Compound CCA Path)
+The Victron Orion-Tr Smart is a non-isolated charger featuring a shared internal negative current plate. Because the high-current charging return path (~28A alternator draw) shares the single 8 AWG vertical Inter-Board Negative wire spanning the lower and upper bus bars, an intentional common-mode ground shift ($\sim0.15\text{V}$ to $0.25\text{V}$) is accepted on the upper board during active driving cycles due to the compound use of 8 AWG CCA wire for the inter-board negative highway and the main return line.
+* **The Trade-Off:** The upper negative bus bar floats significantly above true battery ground while the vehicle alternator is actively bulk-charging the house bank. This skews the local ground reference for any monitoring electronics sharing that ceiling panel.
 * **Component Safety & Isolation Verification:** Because the entire micro-grid utilizes an isolated negative return highway directly back to the starter battery, this transient ground shift is entirely contained within the canopy ecosystem. It is physically impossible for common-mode noise to migrate back into the Ford F250's factory chassis ground networks or trigger OEM module communication faults.
 * **Cyrix Chattering Mitigation:** While a ground shift skews voltage-sensing accuracy, the 5-Pin SPDT logic relay serves as a physical interlock. Because the relay breaks the Cyrix control circuit (Pin 85) whenever the vehicle ignition is hot, the Cyrix is completely mechanically immobilized during high-current Orion cycles, rendering chattering or premature contact degradation physically impossible.
-* **Victron Smart Software Calibration:** To account for this $\sim0.15\text{V}$ shift when dialing in the system via Bluetooth, the following software compensations are applied within the VictronConnect app parameters:
-  1. *Victron Orion Input Voltage Lock-out:* Set to 12.7V (instead of 12.5V) to guarantee clean engine shutdown detection despite the elevated ground reference.
-  2. *Victron SmartSolar MPPT:* Bulk and Float charge targets are shifted upward by $+0.1\text{V}$ to ensure true terminal voltages are achieved at the lower panel during simultaneous solar/alternator charging windows.
+* **Victron Smart Software Calibration:** To account for this shift when dialing in the system via Bluetooth, the following software compensations are applied within the VictronConnect app parameters:
+  1. *Victron Orion Input Voltage Lock-out:* Set to 12.6V or 12.7V to guarantee clean engine shutdown detection despite the elevated ground reference.
+  2. *Victron SmartSolar MPPT:* Bulk and Float charge targets are shifted upward by $+0.15\text{V}$ to ensure true terminal voltages are achieved at the lower panel during simultaneous solar/alternator charging windows.
 
 ## 13. Non-Default App Programming & Software Configurations
 
 This section formalizes the custom programming targets required within the VictronConnect app interface. These overrides actively compensate for the accepted project infrastructure debts (Section 12), ensuring optimal coordination across varying seasonal profiles.
 
 ### 🔌 1. Victron Orion-Tr Smart 12/12-18A Settings
-By default, the Orion ships in "Power Supply" mode. It must be toggled to **"Charger"** mode immediately. Because it operates over the 50-foot 8 AWG CCA highway run, its voltage-sensing parameters must be explicitly de-rated to prevent premature engine-shutdown cycling.
+By default, the Orion ships in "Power Supply" mode. It must be toggled to **"Charger"** mode immediately. Because it operates over the 50-foot 8 AWG CCA highway run paired with 8 AWG CCA vertical umbilical runs, its voltage-sensing parameters must be de-rated to prevent premature engine-shutdown cycling.
 
 #### ⚙️ Engine Shutdown Detection (Advanced Settings)
 * **Alternator Type:** Smart Alternator
@@ -529,12 +528,12 @@ By default, the Orion ships in "Power Supply" mode. It must be toggled to **"Cha
 * **Delayed Start Voltage:** `13.5V`
 * **Delayed Start Voltage Delay:** `60 seconds`
 * **Shutdown Voltage:** `13.1V`
-  * *Justification:* Raised slightly from the factory default ($13.0\text{V}$) to account for the voltage drop across the 8 AWG CCA highway under load. This guarantees the Orion shuts down cleanly when the truck engine turns off, preventing starting bank draw down.
+  * *Justification:* Raised slightly from the factory default ($13.0\text{V}$) to account for the voltage drop across the 8 AWG CCA highway run under load. This guarantees the Orion shuts down cleanly when the truck engine turns off, preventing starting bank draw down.
 
 #### ⚙️ Input Voltage Lock-Out Settings
 * **Input Voltage Lock-Out:** Enabled
-* **Lock-out Threshold (Under-Voltage):** `12.7V`
-  * *Justification:* Crucial non-default override. Compensates for the $\sim0.15\text{V}$ upper-board ground shift (Section 12.3) caused by common-mode noise. If the ground shifts up, a lower lock-out would bleed too deep into the starting battery's reserve capacity before tripping.
+* **Lock-out Threshold (Under-Voltage):** `12.7V` (or `12.6V` if line drop triggers unexpected dropouts)
+  * *Justification:* Crucial non-default override. Compensates for the increased upper-board ground shift caused by the compound CCA returns. If the ground shifts up, a lower lock-out is mandatory to ensure the Orion doesn't cut out prematurely under full continuous alternator pull.
 * **Restart Threshold:** `13.2V`
 
 #### 🔋 Charge Profile Settings (User-Defined Custom)
@@ -550,10 +549,10 @@ Because your 200W panel is flat-mounted and wired directly to the *truck-side* p
 #### 🔋 Battery & Charge Optimization Parameters
 * **Battery Preset:** User-Defined (Do not use "Smart Lithium" default due to target offsets)
 * **Max Charge Current:** `20A` (Full controller capacity)
-* **Absorption Voltage:** `14.5V` 
-  * *Justification:* Shifted upward by **$+0.1\text{V}$** over standard lithium parameters. This offsets the shared vertical negative wire voltage drop during active windows, ensuring that the true voltage hitting the battery boxes resolves to a perfect $14.4\text{V}$.
-* **Float Voltage:** `13.6V`
-  * *Justification:* Boosted slightly above standard $13.5\text{V}$ lithium float profiles. Since the solar array hits the lead-acid starting battery first, this slightly higher float target keeps the lead-acid bank properly saturated and counteracts the baseline $175\text{mA}$ SW6 upfitter relay coil debt.
+* **Absorption Voltage:** `14.55V` 
+  * *Justification:* Shifted upward by **$+0.15\text{V}$** over standard lithium parameters to offset the shared 12 AWG CCA local battery line resistance and vertical ground wire drop during active windows, ensuring that the true voltage hitting the battery boxes resolves to a perfect $14.4\text{V}$.
+* **Float Voltage:** `13.65V`
+  * *Justification:* Boosted slightly above standard profiles. Since the solar array hits the lead-acid starting battery first, this higher float target accounts for local line drops, keeps the lead-acid bank properly saturated, and counteracts the baseline $175\text{mA}$ SW6 upfitter relay coil debt.
 * **Equalization Charge:** Disabled (Ensure toggle is physically grayed out; equalization will destroy LiFePO4 chemistry)
 
 #### ❄️ Low-Temperature Cut-off Behavior
