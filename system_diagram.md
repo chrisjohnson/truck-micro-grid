@@ -8,54 +8,54 @@ graph TD
     subgraph EngineBay ["Engine Bay"]
         StarterBat["Starter Battery<br/><small>(+ / - Lugs)</small>"]
         SW6Relay["Upfitter SW6 Relay<br/><small>(Output Stud)</small>"]
-        JCase40["40A JCase Fuse<br/><small>(In Engine Fuse Box)</small>"]
-        IgnitionSrc["Upfitter Ignition Bundle<br/><small>(Engine Bay Harness)</small>"]
+        JCase40["40A JCase Fuse"]
+        IgnitionSrc["Upfitter Ignition Bundle"]
     end
 
     subgraph FrameRails ["Truck Frame Rails (Under Truck)"]
-        TJunction["T-Junction Box<br/><small>(8 AWG Splitter)</small>"]
-        PosHighway["8 AWG Pos Highway<br/><small>(SW6 Driven)</small>"]
-        NegHighway["8 AWG Dedicated Neg Highway<br/><small>(Isolated Return)</small>"]
-        IgnitionHighway["18 AWG Ignition Line<br/><small>(Relay Signal)</small>"]
+        TJunction["T-Junction Box"]
+        PosHighway["8 AWG Pos Highway"]
+        NegHighway["8 AWG Dedicated Neg Highway"]
+        IgnitionHighway["18 AWG Ignition Line"]
     end
 
     subgraph TailgateArea ["Tailgate / Tail Light Area"]
-        TailgateFuse["Tailgate Mini Fuse Panel<br/><small>(Aux Bus)</small>"]
-        BedLights["Custom Bed Lights<br/><small>(16 AWG Strips)</small>"]
-        Maxi40A_1["40A Maxi Fuse<br/><small>(Tailgate Side)</small>"]
-        Maxi40A_2["40A Maxi Fuse<br/><small>(Sub-Board Side)</small>"]
+        TailgateFuse["Tailgate Mini Fuse Panel"]
+        BedLights["Custom Bed Lights"]
+        Maxi40A_1["40A Maxi Fuse"]
+        Maxi40A_2["40A Maxi Fuse"]
     end
 
     subgraph LowerBoard ["Lower Sub-Board (Bed Wall)"]
-        Anderson["Anderson Connector<br/><small>(8 AWG SB50)</small>"]
-        MC4["MC4 Logic Connector<br/><small>(2-Pin Signal)</small>"]
-        HousePosBus["House Positive Bus Bar<br/><small>(Studs 1-5)</small>"]
-        HouseNegBus["Lower Neg Bus Bar<br/><small>(Common GND)</small>"]
-        XT60_Bat1["XT60 Battery 1<br/><small>(Port 1 - 20A)</small>"]
-        XT60_Bat2["XT60 Battery 2<br/><small>(Port 2 - 20A)</small>"]
-        XT60_Load1["XT60 Load 1<br/><small>(Fridge - 20A)</small>"]
-        XT60_Load2["XT60 Load 2<br/><small>(Aux - 20A)</small>"]
-        HouseBat1["Goldenmate Battery 1<br/><small>(100Ah LiFePO4)</small>"]
-        HouseBat2["Goldenmate Battery 2<br/><small>(100Ah LiFePO4)</small>"]
+        Anderson["Anderson Connector"]
+        MC4["MC4 Logic Connector"]
+        HousePosBus["House Positive Bus Bar"]
+        HouseNegBus["Lower Neg Bus Bar"]
+        XT60_Bat1["XT60 Battery 1"]
+        XT60_Bat2["XT60 Battery 2"]
+        XT60_Load1["XT60 Load 1"]
+        XT60_Load2["XT60 Load 2"]
+        HouseBat1["Goldenmate Battery 1"]
+        HouseBat2["Goldenmate Battery 2"]
     end
 
     subgraph UpperBoard ["Upper Sub-Board (Ceiling)"]
-        TruckPosBus["Truck-Side Pos Bus Bar<br/><small>(Always Hot Bus)</small>"]
-        UpperNegBus["Upper Neg Bus Bar<br/><small>(Common GND)</small>"]
-        Orion["Victron Orion DC-DC<br/><small>(In+, In-, Out+, Out-, Remote H)</small>"]
-        Cyrix["Cyrix-Li-ct Combiner<br/><small>(Term 87, Term 30, Pin 85, Pin 86)</small>"]
-        MPPT["Victron SmartSolar MPPT<br/><small>(PV+/-, Bat+/-)</small>"]
-        Relay["5-Pin Logic Relay<br/><small>(Pin 30, 86, 85, 87a, 87)</small>"]
-        Wago["Wago Logic Splitter<br/><small>(5-Port Lever Nut)</small>"]
-        SolarSwitch["Solar Disable Switch<br/><small>(Remote Yellow Wire)</small>"]
-        LogicFuse["2A Logic Fuse<br/><small>(Inline Blade)</small>"]
+        TruckPosBus["Truck-Side Pos Bus Bar"]
+        UpperNegBus["Upper Neg Bus Bar"]
+        Orion["Victron Orion DC-DC"]
+        Cyrix["Cyrix-Li-ct Combiner"]
+        MPPT["Victron SmartSolar MPPT"]
+        Relay["5-Pin Logic Relay"]
+        Wago["Wago Logic Splitter"]
+        SolarSwitch["Solar Disable Switch"]
+        LogicFuse["2A Logic Fuse"]
     end
 
     subgraph Roof ["Truck Roof"]
-        SolarPanel["200W Solar Panel<br/><small>(MC4 Connectors)</small>"]
+        SolarPanel["200W Solar Panel"]
     end
 
-    %% Connections
+    %% Connections with precise terminal labels
     StarterBat --- SW6Relay
     SW6Relay --- JCase40
     JCase40 --- PosHighway
@@ -68,22 +68,26 @@ graph TD
 
     Anderson --- TruckPosBus
     NegHighway --- HouseNegBus --- UpperNegBus
-    IgnitionHighway --- MC4 --- Relay
-
-    TruckPosBus --- LogicFuse --- Wago
-    Wago --- Relay
-    Wago --- SolarSwitch --- MPPT
+    IgnitionHighway --- MC4
     
-    Relay ---|87a NC -> Pin 85| Cyrix
-    Relay ---|87 NO -> Remote H| Orion
+    MC4 ---|Relay Pin 86| Relay
+    LogicFuse ---|Wago Input| Wago
+    TruckPosBus --- LogicFuse
     
-    TruckPosBus ---|In+| Orion
-    TruckPosBus ---|Term 87| Cyrix
-    TruckPosBus ---|Bat+| MPPT
-    SolarPanel ---|PV +/-| MPPT
+    Wago ---|Relay Pin 30| Relay
+    Wago ---|Switch Input| SolarSwitch
+    SolarSwitch ---|Remote Yellow| MPPT
+    
+    Relay ---|Pin 87a NC > Cyrix Pin 85| Cyrix
+    Relay ---|Pin 87 NO > Orion Remote H| Orion
+    
+    TruckPosBus ---|Orion In+| Orion
+    TruckPosBus ---|Cyrix Term 87| Cyrix
+    TruckPosBus ---|MPPT Bat+| MPPT
+    SolarPanel ---|MPPT PV+/-| MPPT
 
-    Orion ---|Out+ -> Term 30| Cyrix
-    Cyrix ---|Term 30 -> Stud 1| HousePosBus
+    Orion ---|Orion Out+ > Cyrix Term 30| Cyrix
+    Cyrix ---|Cyrix Term 30 > Stud 1| HousePosBus
     
     HousePosBus ---|Stud 2| XT60_Bat1 --- HouseBat1
     HousePosBus ---|Stud 3| XT60_Bat2 --- HouseBat2
