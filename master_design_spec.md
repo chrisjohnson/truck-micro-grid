@@ -245,7 +245,7 @@ To supply logic and remote control power safely:
 * A **2A inline blade fuse** taps off the truck-side positive bus bar and feeds a **Wago connector**.
 * The Wago connector splits this 12V feed to:
   1. **Pin 30 (SPDT Relay Input):** Provides control voltage to the interlocking relay loop.
-  2. **Solar On/Off Switch:** An inline switch that controls the VE.Direct yellow remote enable wire plugged into the MPPT. Flipping this switch OFF immediately drops MPPT generation to 0A, allowing you to isolate the bed grid for battery box maintenance or storage.
+  2. **Solar On/Off Switch:** An inline switch that controls a 12V feed to a **Victron VE.Direct Non-Inverting Remote On/Off Cable**. When the switch is toggled ON, 12V is supplied to the yellow cable terminal, signaling the MPPT's digital microprocessor to enable solar generation. Flipping this switch OFF drops the signaling voltage to 0V, forcing the MPPT to a "Remote Disabled" standby state (0A output) for grid maintenance or storage.
 
 ### 🎛️ Relay Pinout & Wiring Schedule (SPDT Relay)
 The logic wires utilize a mix of **18 AWG and 12 AWG OFC primary wire** matching the component terminals.
@@ -263,7 +263,7 @@ The logic wires utilize a mix of **18 AWG and 12 AWG OFC primary wire** matching
 
 | Ignition Key State | Relay Coil (Pin 86) | Relay Pin 30 Connects To | Cyrix Combiner State | Orion DC-DC State | System Behavior |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Key OFF** | De-energized | **Pin 87a (NC)** | **Armed / Active** | **Forced OFF** | SW6 highway always hot. Solar charges starter battery. When starter hits $>13.4\text{V}$, Cyrix bridges to charge/maintain house bank and run fridge. Auto-disconnects if combined voltage drops below $12.8\text{V}$ (e.g. at night under load). |
+| **Key OFF** | De-energized | **Pin 87a (NC)** | **Armed / Active** | **Forced OFF** | SW6 highway always hot. Solar charges starter battery if the VE.Direct remote switch is enabled. When starter hits $\ge 13.4\text{V}$, Cyrix bridges to charge/maintain house bank and run fridge. Auto-disconnects if combined voltage drops below $12.8\text{V}$ (e.g. at night under load). |
 | **Key ON/RUN** | Energized | **Pin 87 (NO)** | **Forced OPEN** | **Armed / Active** | Alternator charges starter via SW6 highway. Orion charges house bank at 18A. Cyrix is locked open to prevent alternator overload or uncontrolled bypass loops. |
 
 ---
@@ -349,11 +349,23 @@ Because the upper sub-board and vertical umbilical pathways utilize Copper-Clad 
 
 ---
 
-## 8. Future Solar PV Wiring Guidance
+## 8. Solar PV Wiring & Safety Isolation Protocol
 
 When running the solar panel input wires through the roof gland to the MPPT on the upper board:
+
+### 🔌 1. Physical Specifications
 * **Recommended Wire:** Use **10 AWG or 12 AWG PV-rated copper wire** (tray cable). With a max current of $\sim7\text{A}$, this size handles the load with negligible voltage drop and provides excellent weather/UV protection on the roof.
-* **PV Overcurrent Protection:** Because a single 200W solar panel is a current-limited source ($I_{sc} \sim 7\text{A}$), it cannot produce enough current to overload 12 AWG or 10 AWG wire. A PV input fuse is not electrically required, but a **10A or 15A inline MC4 fuse** on the roof-side PV (+) line is recommended as an extra physical safety disconnect.
+* **PV Overcurrent Protection:** Because a single 200W solar panel is a current-limited source ($I_{sc} \sim 7\text{A}$), it cannot produce enough current to overload 12 AWG or 10 AWG wire. A PV input fuse is not electrically required, but a **10A or 15A inline MC4 fuse** on the roof-side PV (+) line is utilized as an extra physical safety disconnect.
+
+### ⚠️ 2. The "Live-Source" Maintenance Hazard & Roof-Side Protocol
+Because a photovoltaic array converts light continuously, the raw positive and negative copper leads running from the panel through the roof gland to the upper sub-board are **live and energized at all times** during daylight hours. 
+
+* **The Operational Vulnerability:** The physical upper-board Solar Disable switch (Section 4) cuts low-current logic power to the MPPT's remote port, cleanly dropping active battery charging to 0A. However, it **does not isolate** the incoming PV conductors. The raw wires landing in the MPPT's `PV +` and `PV -` screw terminals maintain full open-circuit voltage (up to $36.5\text{V}$) whenever the truck is outside.
+* **Mandatory Physical Isolation Step:** To prevent arc-flashes, terminal shorts, or damage to the MPPT microprocessor when arranging, servicing, or adjusting port wiring inside the bed, the user **MUST** scale the truck and physically decouple the weatherproof **roof-side MC4 connectors** directly at the panel output leads first. 
+* **The Golden Safety Sequence:**
+  1. *De-energize Logic:* Toggle the upper sub-board Solar Disable switch to OFF (drops system charging to 0A).
+  2. *Sever the Source:* Disconnect the roof-top MC4 plugs outside the SmartCap to make the gland line cold.
+  3. *Execute Service:* Perform safe, un-energized terminal handling inside the bed.
 
 ---
 
@@ -563,6 +575,11 @@ Because your 200W panel is flat-mounted and wired directly to the *truck-side* p
 * **Float Voltage:** `13.65V`
   * *Justification:* Boosted slightly above standard profiles. Since the solar array hits the lead-acid starting battery first, this higher float target accounts for local line drops, keeps the lead-acid bank properly saturated, and counteracts the baseline $175\text{mA}$ SW6 upfitter relay coil debt.
 * **Equalization Charge:** Disabled (Ensure toggle is physically grayed out; equalization will destroy LiFePO4 chemistry)
+
+#### ⚙️ VE.Direct Port / RX Pin Digital Logic Override
+* **TX/RX Port Configuration Menu:** Enabled
+* **RX Pin Function Assignment:** `Remote On/Off`
+  * *Justification:** **CRITICAL MANDATORY OVERRIDE.** By default, the MPPT treats the physical VE.Direct RX line as a pure digital data pin. This parameter must be manually reassigned to instruct the internal microprocessor to read the yellow cable's voltage state as a physical high/low ignition signal. Once active, a 12V positive signal at the RX pin authorizes charging, while a 0V signal hard-drops controller generation to 0A, forcing a "Remote Disabled" standby code.
 
 #### ❄️ Low-Temperature Cut-off Behavior
 * **Low-Temperature Cut-off:** `Disabled`
