@@ -1,6 +1,9 @@
 # AGENTS.md — opencode Project Context
 
-This file tells opencode how to interact with this project: a custom 12V DC micro-grid for a 2024 Ford F250 Tremor with a SmartCap camper shell.
+**System Owner:** Christopher Johnson  
+**Platform:** 2024 Ford F250 Lariat Tremor (7.3L Gas, SmartCap Bed Camper Shell)
+
+This file is the agent instructions and system index for this project: a custom 12V DC micro-grid for a 2024 Ford F250 Tremor with a SmartCap camper shell.
 
 The master spec has been split into focused files under `spec/` for optimal agentic loading. Always load only the spec files needed for the task at hand.
 
@@ -13,9 +16,27 @@ The master spec has been split into focused files under `spec/` for optimal agen
 | `spec/03-controls-settings.md` | Control logic, relay truth table, VictronConnect programming (S4, S13). Load for configuration changes. |
 | `spec/04-hardware-layout.md` | Hardware inventory, bus bar distribution, battery box internals (S2, S5, S5A). Load for component adds. |
 | `spec/05-installation-safety.md` | System overview, parasitic strategy, mechanical install, solar safety (S1, S7, S8). Load for safety reference. |
-| `master_design_spec.md` | Index / file map. Lightweight entry point. |
 | `AGENTS.md` | This file — opencode agent instructions |
 | `opencode.json` | Agent/plugin configuration |
+
+## Section Origins
+
+| Original Section | Now In |
+|-----------------|--------|
+| 1. System Overview & Parasitic Drain | `spec/05-installation-safety.md` |
+| 2. Core Hardware Inventory | `spec/04-hardware-layout.md` |
+| 3. Physical Layout & Wiring Topology | `spec/01-system-core.md` |
+| 4. Control Logic & Switch Configuration | `spec/03-controls-settings.md` |
+| 5. Main House Panel Distribution | `spec/04-hardware-layout.md` |
+| 5A. Battery Box Internals | `spec/04-hardware-layout.md` |
+| 6. System Physics & Impedance | `spec/01-system-core.md` |
+| 7. Mechanical Installation & Mounting | `spec/05-installation-safety.md` |
+| 8. Solar PV Safety Protocol | `spec/05-installation-safety.md` |
+| 9. Wiring & Connection Schedule | `spec/02-wiring-schedule.md` |
+| 10. Fuse Audit & Coordination | `spec/01-system-core.md` |
+| 11. Energy Balance & Ecosystem Physics | `spec/01-system-core.md` |
+| 12. Accepted Technical Debt | `spec/01-system-core.md` |
+| 13. VictronConnect Settings | `spec/03-controls-settings.md` |
 
 ## System Identity
 
