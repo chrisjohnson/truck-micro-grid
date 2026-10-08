@@ -107,7 +107,7 @@ When you need to navigate the spec without a full read:
 - `Section X` — jump to a section number
 - Component names: `Orion`, `Cyrix`, `SmartShunt`, `BatteryProtect`, `MPPT`
 - Wire identifiers: `8 AWG CCA`, `House Charging Highway`, `Ignition Signal Line`
-- Fuse identifiers: `40A JCase`, `30A MIDI`, `50A MRBF`
+- Fuse identifiers: `40A JCase`, `30A MIDI`
 - Settings: `Lock-out Threshold`, `Absorption Voltage`, `Remote On/Off`
 
 ## Design Principles (Do Not Violate)

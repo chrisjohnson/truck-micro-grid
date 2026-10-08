@@ -37,50 +37,41 @@
 
 ## 5. Main House Panel Power Distribution & Fusing
 
-The lower sub-board's positive distribution is divided into two separate, isolated bus bars to separate the charging path from the protected load network:
-
-### 🔌 1. House Charging Bus Bar (Unprotected)
-This bus bar connects the incoming charging highway directly to the battery Charge/House ports, allowing both batteries to charge in parallel directly to their terminals.
+The lower sub-board house positive bus bar distributes power between the battery ports and the house loads. Both the direct (Charge/House) and the BatteryProtect-protected (Loads Only) paths from each battery are paralleled onto a single bus bar via individual 30A fuses, with each load port on its own fuse.
 
 ```
-                           [ HOUSE CHARGING BUS BAR ]
-                         _______/_______|______
-                        |               |      |
-                    [ STUD 1 ]      [ STUD 2 ] [ STUD 3 ]
-                      (Input)         (30A)      (30A)
-                        |               |          |
-                     Incoming      XT60 Bat 1   XT60 Bat 2
-                   Charging Hwy    Chg Port     Chg Port
+                          [ HOUSE POSITIVE BUS BAR ]
+      _______________________/_______|___________|___________
+     |               |               |               |               |
+ [ STUD 1 ]      [ STUD 2 ]      [ STUD 3 ]      [ STUD 4 ]      [ STUD 5 ]
+   (Input)         (30A)           (30A)           (30A)           (30A)
+     |               |               |               |               |
+  Incoming       XT60 Bat 1     XT60 Bat 1     XT60 Bat 2     XT60 Bat 2
+Charging Hwy     Chg Port       Ld Port        Chg Port       Ld Port
+
+                                  [ LOADS BUS CONTINUATION ]
+                                _________|___________
+                               |                       |
+                           [ STUD 6 ]              [ STUD 7 ]
+                             (20A)                   (20A)
+                               |                       |
+                           XT60 Load 1             XT60 Load 2
+                           (Fridge)                (Heater/Aux)
 ```
 
-* **Stud 1: House Charging Highway (MIDI / 30A)**
+* **Stud 1: House Charging Highway (MIDI / 30A - at this stud)**
   * *Wiring:* 8 AWG OFC positive wire running down from Cyrix Terminal 30 on the upper board. The 30A MIDI fuse protects this run from house-side short circuits.
-* **Stud 2: XT60 Battery 1 Charge Port (30A Fuse)**
-  * *Wiring:* 12 AWG pure copper pigtail to XT60 charge port. Connected to the Battery Box 1 "Charge/House" XT60 port via a 30" 12 AWG patch cable.
-* **Stud 3: XT60 Battery 2 Charge Port (30A Fuse)**
-  * *Wiring:* 12 AWG pure copper pigtail to XT60 charge port. Connected to the Battery Box 2 "Charge/House" XT60 port via a 30" 12 AWG patch cable.
-
-### 🛡️ 2. House Load Bus Bar (Protected)
-This bus bar combines the output from the load-side of both battery boxes (individually protected by their internal BatteryProtects and SmartShunts) and distributes it to the house loads.
-
-```
-                                [ HOUSE LOAD BUS BAR ]
-                     _______/___________|___________|______\_______
-                    |               |               |               |
-                [ STUD A ]      [ STUD B ]      [ STUD C ]      [ STUD D ]
-                  (30A)           (30A)           (20A)           (20A)
-                    |               |               |               |
-                XT60 Bat 1      XT60 Bat 2      XT60 Load 1     XT60 Load 2
-                Load Port       Load Port        (Fridge)      (Diesel Heater)
-```
-
-* **Stud A: XT60 Battery 1 Load Port (30A Fuse)**
-  * *Wiring:* 12 AWG pure copper pigtail to XT60 load port. Connected to the Battery Box 1 "Loads Only" XT60 port via a 30" 12 AWG patch cable.
-* **Stud B: XT60 Battery 2 Load Port (30A Fuse)**
-  * *Wiring:* 12 AWG pure copper pigtail to XT60 load port. Connected to the Battery Box 2 "Loads Only" XT60 port via a 30" 12 AWG patch cable.
-* **Stud C: XT60 Load Port 1 (20A Fuse)**
-  * *Wiring:* 12 AWG pure copper pigtail to XT60 load port. Connected to the 12V compressor fridge run (16-foot round-trip).
-* **Stud D: XT60 Load Port 2 (20A Fuse)**
+* **Stud 2: XT60 Battery 1 Charge/House Port (30A Fuse)**
+  * *Wiring:* 12 AWG pure copper pigtail to XT60 port. Connected to the Battery Box 1 "Charge/House" XT60 port via a 30" 12 AWG patch cable.
+* **Stud 3: XT60 Battery 1 Loads Only Port (30A Fuse)**
+  * *Wiring:* 12 AWG pure copper pigtail to XT60 port. Connected to the Battery Box 1 "Loads Only" XT60 port via a 30" 12 AWG patch cable (protected at the battery box by the internal BatteryProtect).
+* **Stud 4: XT60 Battery 2 Charge/House Port (30A Fuse)**
+  * *Wiring:* 12 AWG pure copper pigtail to XT60 port. Connected to the Battery Box 2 "Charge/House" XT60 port via a 30" 12 AWG patch cable.
+* **Stud 5: XT60 Battery 2 Loads Only Port (30A Fuse)**
+  * *Wiring:* 12 AWG pure copper pigtail to XT60 port. Connected to the Battery Box 2 "Loads Only" XT60 port via a 30" 12 AWG patch cable (protected at the battery box by the internal BatteryProtect).
+* **Stud 6: XT60 Load Port 1 (20A Fuse)**
+  * *Wiring:* 12 AWG pure copper pigtail to XT60 load port. Connected to the 12V compressor fridge run.
+* **Stud 7: XT60 Load Port 2 (20A Fuse)**
   * *Wiring:* 12 AWG pure copper pigtail to XT60 load port. Connected to the diesel heater run (or secondary aux load).
 
 ---
@@ -95,7 +86,6 @@ graph TD
     subgraph BatteryBox ["Battery Box Internals"]
         BatPos["Battery Positive (+) Terminal"]
         BatNeg["Battery Negative (-) Terminal"]
-        MainFuse["Main Positive Fuse<br/><small>(50A MRBF / MIDI)</small>"]
         SmartShunt["Victron SmartShunt<br/><small>(500A/50mV)</small>"]
         BatteryProtect["Victron Smart BatteryProtect<br/><small>(12/24V-65A)</small>"]
         ShuntVse["SmartShunt Vbatt+ Sense (1A Fused)"]
@@ -106,12 +96,10 @@ graph TD
     end
 
     %% Positive Connections
-    BatPos ---|direct-post| MainFuse
-    MainFuse ---|split-point| ChgPos[Positive Split]
-    ChgPos --->|direct-line| XT60_Chg
-    ChgPos --->|BP-IN| BatteryProtect
+    BatPos --->|direct-line| XT60_Chg
+    BatPos --->|BP-IN| BatteryProtect
     BatteryProtect --->|BP-OUT| XT60_Ld
-    MainFuse ---|shunt-power-line| ShuntVse --->|Vbatt-sense| SmartShunt
+    BatPos ---|shunt-power-line| ShuntVse --->|Vbatt-sense| SmartShunt
 
     %% Negative Connections
     BatNeg ---|bat-neg-cable| SmartShunt
@@ -123,19 +111,17 @@ graph TD
 
 ### 📋 Component Details & Wiring Specifications
 
-1. **Main Internal Battery Protection:**
-   * **Fuse:** A **50A MRBF (Marine Rated Battery Fuse)** is mounted directly on the battery's positive terminal post. This serves as the primary line of defense against short circuits inside the box or at the XT60 ports.
-2. **Victron SmartShunt (500A/50mV):**
+1. **Victron SmartShunt (500A/50mV):**
    * **Purpose:** Measures all current entering and leaving the individual battery. Enables precise tracking of State of Charge (SoC), voltage, and current via Bluetooth.
    * **Negative Wiring:** The battery's negative terminal connects directly to the SmartShunt **"TO BATTERY"** terminal using a short, heavy-gauge copper cable (10 AWG or 8 AWG). The **"TO SYSTEM"** terminal connects to the negative pins of both the Charge/House XT60 port and the Loads Only XT60 port.
-   * **Power / Voltage Sense:** A thin red wire with an integrated **1A inline fuse** connects from the battery side of the MRBF fuse to the SmartShunt's **Vbatt+** terminal.
-3. **Victron Smart BatteryProtect (12/24V-65A):**
+   * **Power / Voltage Sense:** A thin red wire with an integrated **1A inline fuse** connects from the battery positive terminal to the SmartShunt's **Vbatt+** terminal.
+2. **Victron Smart BatteryProtect (12/24V-65A):**
    * **Purpose:** Acts as a smart low-voltage disconnect (LVD) for load circuits, preventing over-discharge and protecting LiFePO4 cell health.
    * **Positive Wiring:** 
-     * **IN Terminal:** Connected directly to the fused battery positive terminal (post-MRBF).
+     * **IN Terminal:** Connected directly to the battery positive terminal.
      * **OUT Terminal:** Connected to the positive pin of the external **Loads Only XT60 Port**.
    * **Ground Connection (GND Pin):** Connected to the SmartShunt "TO SYSTEM" terminal (system negative) using a thin 18 AWG black wire.
    * **Programming:** Configured via Bluetooth in "LiFePO4" mode with a cut-off threshold of **$11.5\text{V}$ or $12.0\text{V}$** (re-engage at $12.8\text{V}$). This cutoff is deliberately higher than the Goldenmate BMS low-voltage cut-off ($11.0\text{V}$) to prevent the battery's internal BMS from latching off and requiring a wake-up voltage.
-4. **Dual External Ports:**
-   * **XT60 Charge/House Port:** Wired directly to the battery positive terminal (post-MRBF) and system negative (post-SmartShunt). Used for charging and general house bus connection (unprotected by BatteryProtect).
-   * **XT60 Loads Only Port:** Wired to the BatteryProtect OUT terminal (+) and system negative (post-SmartShunt) (-). Used to supply power to the load bus bar.
+3. **Dual External Ports:**
+   * **XT60 Charge/House Port:** Wired directly to the battery positive terminal and system negative (post-SmartShunt). Used for charging and general house bus connection (unprotected by BatteryProtect).
+   * **XT60 Loads Only Port:** Wired to the BatteryProtect OUT terminal (+) and system negative (post-SmartShunt) (-). Used to supply power to the house load circuits.

@@ -29,15 +29,15 @@
 | **Cyrix Ground** | Cyrix Combiner Terminal 86 | Upper Neg Bus Bar (Upper) | 18 AWG OFC (Black) | Unfused | Upper Sub-Board |
 | **MPPT Ground** | Victron SmartSolar MPPT Bat (-) | Upper Neg Bus Bar (Upper) | 12 AWG CCA | Unfused | Upper Sub-Board |
 | **Orion Output Jumper** | Orion-Tr Smart Output (+) | Cyrix Combiner Terminal 30 | 8 AWG CCA | Unfused | Upper Sub-Board |
-| **House Charging Highway** | Cyrix Combiner Terminal 30 | House Charging Bus Bar Stud 1 (Lower) | 8 AWG OFC | MIDI / 30A | Upper Board -> down SmartCap wall |
-| **House Battery 1 Charge Power** | House Charging Bus Bar Stud 2 | XT60 Battery 1 Charge Port | 12 AWG OFC | MIDI / 30A | Lower Sub-Board |
-| **House Battery 2 Charge Power** | House Charging Bus Bar Stud 3 | XT60 Battery 2 Charge Port | 12 AWG OFC | MIDI / 30A | Lower Sub-Board |
-| **House Battery 1 Load Power** | House Load Bus Bar Stud A | XT60 Battery 1 Load Port | 12 AWG OFC | MIDI / 30A | Lower Sub-Board |
-| **House Battery 2 Load Power** | House Load Bus Bar Stud B | XT60 Battery 2 Load Port | 12 AWG OFC | MIDI / 30A | Lower Sub-Board |
-| **House Load Port 1 Power** | House Load Bus Bar Stud C | XT60 Load Port 1 | 12 AWG OFC | MIDI / 20A | Lower Sub-Board |
-| **House Load Port 2 Power** | House Load Bus Bar Stud D | XT60 Load Port 2 | 12 AWG OFC | MIDI / 20A | Lower Sub-Board |
-| **House Battery 1 Charge Patch** | Lower Board XT60 Battery 1 Charge Port | Battery Box 1 Charge/House Port | 12 AWG OFC | Unfused (Protected by box MRBF & BMS) | Bed floor (30-inch XT60 patch) |
-| **House Battery 2 Charge Patch** | Lower Board XT60 Battery 2 Charge Port | Battery Box 2 Charge/House Port | 12 AWG OFC | Unfused (Protected by box MRBF & BMS) | Bed floor (30-inch XT60 patch) |
-| **House Battery 1 Load Patch** | Lower Board XT60 Battery 1 Load Port | Battery Box 1 Loads Only Port | 12 AWG OFC | Unfused (Protected by box MRBF & BP) | Bed floor (30-inch XT60 patch) |
-| **House Battery 2 Load Patch** | Lower Board XT60 Battery 2 Load Port | Battery Box 2 Loads Only Port | 12 AWG OFC | Unfused (Protected by box MRBF & BP) | Bed floor (30-inch XT60 patch) |
+| **House Charging Highway** | Cyrix Combiner Terminal 30 | House Positive Bus Bar Stud 1 (Lower) | 8 AWG OFC | MIDI / 30A | Upper Board -> down SmartCap wall |
+| **House Battery 1 Charge Power** | House Positive Bus Bar Stud 2 | XT60 Battery 1 Charge Port | 12 AWG OFC | MIDI / 30A | Lower Sub-Board |
+| **House Battery 1 Load Power** | House Positive Bus Bar Stud 3 | XT60 Battery 1 Load Port | 12 AWG OFC | MIDI / 30A | Lower Sub-Board |
+| **House Battery 2 Charge Power** | House Positive Bus Bar Stud 4 | XT60 Battery 2 Charge Port | 12 AWG OFC | MIDI / 30A | Lower Sub-Board |
+| **House Battery 2 Load Power** | House Positive Bus Bar Stud 5 | XT60 Battery 2 Load Port | 12 AWG OFC | MIDI / 30A | Lower Sub-Board |
+| **House Load Port 1 Power** | House Positive Bus Bar Stud 6 | XT60 Load Port 1 | 12 AWG OFC | MIDI / 20A | Lower Sub-Board |
+| **House Load Port 2 Power** | House Positive Bus Bar Stud 7 | XT60 Load Port 2 | 12 AWG OFC | MIDI / 20A | Lower Sub-Board |
+| **House Battery 1 Charge Patch** | Lower Board XT60 Battery 1 Charge Port | Battery Box 1 Charge/House Port | 12 AWG OFC | Unfused (Protected by panel MIDI + Goldenmate BMS) | Bed floor (30-inch XT60 patch) |
+| **House Battery 2 Charge Patch** | Lower Board XT60 Battery 2 Charge Port | Battery Box 2 Charge/House Port | 12 AWG OFC | Unfused (Protected by panel MIDI + Goldenmate BMS) | Bed floor (30-inch XT60 patch) |
+| **House Battery 1 Load Patch** | Lower Board XT60 Battery 1 Load Port | Battery Box 1 Loads Only Port | 12 AWG OFC | Unfused (Protected by panel MIDI + BatteryProtect + BMS) | Bed floor (30-inch XT60 patch) |
+| **House Battery 2 Load Patch** | Lower Board XT60 Battery 2 Load Port | Battery Box 2 Loads Only Port | 12 AWG OFC | Unfused (Protected by panel MIDI + BatteryProtect + BMS) | Bed floor (30-inch XT60 patch) |
 | **Solar Panel Input (Future)** | Solar Panel on Roof | Victron SmartSolar MPPT PV (+/-) | 10 or 12 AWG PV | Optional MC4 / 10A-15A | Roof -> Gland -> Upper Board |
