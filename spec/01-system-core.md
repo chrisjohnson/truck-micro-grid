@@ -327,6 +327,9 @@ To ensure system reliability, each fuse point has been audited for both wire saf
 
 This section codifies the mathematical and physical justification for the "Always-ON" Upfitter Switch 6 (SW6) operating philosophy. It proves that the system maintains starting battery health without user intervention under standard driveway and active camping profiles.
 
+> [!NOTE]
+> **No-sunshade exception.** SW6 is ON by default at all times, with one approved exception: **toggle SW6 OFF when parked with no sunlight** (deep shade, garage, night storage without solar). With zero harvest there is nothing to offset the 175mA upfitter relay coil debt, so leaving SW6 ON only drains the starter battery for no benefit — the house bank remains fully isolated and runs its own loads regardless. Restore SW6 to ON before starting or when returning to sun exposure. This exception is deliberately narrow; the always-on doctrine remains the default (see `AGENTS.md` design principles).
+
 ### 🔌 Baseline Parasitic Current Modeling
 When the vehicle is stationary and SW6 remains toggled ON in the cab, the system enters an autonomous monitoring state. The baseline power debt is calculated across two distinct physical operational modes:
 
@@ -420,3 +423,11 @@ The Victron Orion-Tr Smart is a non-isolated charger featuring a shared internal
 * **Victron Smart Software Calibration:** To account for this shift when dialing in the system via Bluetooth, the following software compensations are applied within the VictronConnect app parameters:
   1. *Victron Orion Input Voltage Lock-out:* Set to 12.6V or 12.7V to guarantee clean engine shutdown detection despite the elevated ground reference.
   2. *Victron SmartSolar MPPT:* Bulk and Float charge targets are shifted upward by $+0.15\text{V}$ to ensure true terminal voltages are achieved at the lower panel during simultaneous solar/alternator charging windows.
+
+### 🔧 4. Phase 1 Temporary Cyrix Bypass Jumper (REMOVED — Historical Record Only)
+
+During Phase 1 commissioning, when the SW6 power highway and Ignition Sense wires were intentionally left disconnected, a **temporary jumper was installed across Cyrix Terminal 30 (house side) and Terminal 87 (truck side)** to let the solar panel manage the house bank and house loads in isolation.
+
+* **What it did:** Hard-paralleled the House Charging Bus Bar with the Truck-Side Positive Bus Bar, bypassing the Cyrix's voltage-controlled bridge entirely.
+* **Observed side effects (why this record exists):** (1) The frame highway was back-fed from the house bank, so **the custom bed lights could be lit with SW6 OFF** — a symptom that looks like a fault but was jumper-caused. (2) With SW6 ON, the jumper created an unconditional starter↔house tie with no $13.4\text{V}$ bridge / $12.8\text{V}$ open thresholds and no relay control.
+* **Status: REMOVED.** The jumper is **not part of the design and must not be reinstalled.** If bed lights illuminate with SW6 OFF, first verify SW6 state with a voltmeter at the Frame Positive T-Junction before investigating further (daylight illumination can also be normal solar back-feed: MPPT → truck bus → T-junction).
