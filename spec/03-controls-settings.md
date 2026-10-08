@@ -27,6 +27,9 @@ The logic wires utilize a mix of **18 AWG and 12 AWG OFC primary wire** matching
 > [!NOTE]
 > SW6 (always hot) and the ignition key signal are **independent inputs**. SW6 controls the main 8 AWG power highway to the T-junction and is always energized. The relay coil at Pin 86 is triggered solely by the factory upfitter ignition bundle — it is hot only when the key is in the ON/RUN position, regardless of SW6 state.
 
+> [!NOTE]
+> **Layered Orion enable/disable authority:** The **remote H-pin path** (ignition → relay Pin 87 → H, factory L-H loop removed) is the sole *key-OFF* gate and has been verified to follow the key 1:1 in real time. **Engine Shutdown Detection** (Section 13.1) is a *key-ON* engine-present check only — it cannot gate key-OFF state. The **Input Voltage Lock-Out** ($12.7\text{V}$ / $13.2\text{V}$ restart) is the stall and deep-discharge floor.
+
 | Ignition Key State | Relay Coil (Pin 86) | Relay Pin 30 Connects To | Cyrix Combiner State | Orion DC-DC State | System Behavior |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Key OFF** | De-energized | **Pin 87a (NC)** | **Armed / Active** | **Forced OFF** | SW6 highway always hot. Solar charges starter battery if the VE.Direct remote switch is enabled. When starter hits $\ge 13.4\text{V}$, Cyrix bridges to charge/maintain house bank and run fridge. Auto-disconnects if combined voltage drops below $12.8\text{V}$ (e.g. at night under load). |
@@ -41,14 +44,36 @@ This section formalizes the custom programming targets required within the Victr
 ### 🔌 1. Victron Orion-Tr Smart 12/12-18A Settings
 By default, the Orion ships in "Power Supply" mode. It must be toggled to **"Charger"** mode immediately. Because it operates over the 50-foot 8 AWG CCA highway run paired with 8 AWG CCA vertical umbilical runs, its voltage-sensing parameters must be de-rated to prevent premature engine-shutdown cycling.
 
+#### 🔌 Remote On/Off Wiring Prerequisite
+* **Factory L-H wire loop: REMOVED.** The Orion ships with a wire bridge between the remote L- and H-pins; with it installed the unit is always on and the interlock relay is inert for the Orion. The loop must be removed before commissioning.
+* **Control wiring:** Option b — relay **Pin 87 → H-pin** (`spec/02-wiring-schedule.md`, Relay Control Terminal row). H is pulled to +12V only when the key is in ON/RUN. The **L-pin is unused** (floating).
+
 #### ⚙️ Engine Shutdown Detection (Advanced Settings)
-* **Alternator Type:** Smart Alternator
-* **Start Voltage:** `14.0V`
-  * *Justification:* The Ford 7.3L Godzilla smart alternator rests the starting battery at $\sim13.5\text{V}$ but spikes to $\sim14.5\text{V}$ upon crank. A 14.0V target ensures the Orion only pulls power when the alternator is spinning.
-* **Delayed Start Voltage:** `13.5V`
+
+> [!IMPORTANT]
+> **Status: ENABLED — PENDING FIELD VALIDATION.** The values below are provisional and must be confirmed by the validation procedure at the end of this section before being considered final.
+
+* **Engine Shutdown Detection:** Enabled (Charger mode; not "forced charging")
+* **Alternator Type:** User-defined (editing any Smart Alternator default switches the app to *User defined* — this is expected)
+* **Start Voltage (V_start):** `14.0V`
+  * *Justification:* Catches the documented Ford 7.3L crank spike ($\sim14.5\text{V}$) for an immediate start on every engine start. Keeps solar float ($13.65\text{V}$) below the immediate-start threshold.
+* **Delayed Start Voltage (V_start(delay)):** `13.1V`
+  * *Justification:* **Measured engine-running input at the Orion terminals is $13.4\text{V}$** (unloaded, engine idle). The previous value of $13.5\text{V}$ sat *above* the running voltage, so the delayed path could never fire — this was the root cause of "Charge is disabled due to: Engine shutdown detected" while the engine was running. A $0.3\text{V}$ margin below the measurement survives smart-alternator idle modulation; the earlier $13.35\text{V}$ attempt had only $0.05\text{V}$ of margin, so every transient dip reset the delay timer. The $0.2\text{V}$ gap to Shutdown Voltage below matches Victron's documented minimum threshold separation.
 * **Delayed Start Voltage Delay:** `60 seconds`
-* **Shutdown Voltage:** `13.1V`
-  * *Justification:* Raised slightly from the factory default ($13.0\text{V}$) to account for the voltage drop across the 8 AWG CCA highway run under load. This guarantees the Orion shuts down cleanly when the truck engine turns off, preventing starting bank draw down.
+* **Shutdown Voltage (V_shutdown):** `12.9V`
+  * *Justification:* Sits $\ge 0.2\text{V}$ above the Input Voltage Lock-Out ($12.7\text{V}$) so ESD acts first during a stall and the lock-out remains the final floor. Sits below the measured $13.4\text{V}$ running input so it does not false-trip while driving. The previous $13.1\text{V}$ value had insufficient margin once cable drop is accounted for under charge load.
+
+> [!WARNING]
+> **Known limitation — solar and engine are not voltage-distinguishable in this topology.** The MPPT float target ($13.65\text{V}$) is *higher* than the measured engine-running input ($13.4\text{V}$), so no threshold can separate "solar only" from "engine running." Consequences, accepted: (1) key ON + engine OFF + sunlight will false-start the delayed path after 60s and cycle against shutdown/lock-out until the key is turned off — bounded exposure; (2) key ON + engine OFF in the dark (bus at $12.6\text{–}12.7\text{V}$) is correctly blocked. ESD is a **key-ON engine-present check only** — it is not and cannot be the key-OFF gate (the remote H-pin, verified 1:1 with the relay, serves that role).
+
+> [!NOTE]
+> **Fallback if field validation shows oscillation:** Victron's documented path for alternators with insufficient voltage discrimination is an **external engine-running signal to the remote L-pin** (`>7V` = ESD override), with ESD left Enabled. The Ford upfitter ignition bundle is exactly such a signal. Trade-off: no key-ON/engine-OFF protection in the dark (equivalent to ESD disabled). Adopt only if the tuned thresholds fail validation.
+
+**Field validation procedure (required to clear PENDING status):**
+1. In VictronConnect confirm: ESD = Enabled, Alternator type = User defined, values match the table above.
+2. Record input voltage (V_IN as shown by the Orion) in each state: (a) crank spike, (b) warm idle, no load, (c) **under active 18A charge**, (d) key ON + engine OFF + sunny (solar float), (e) key ON + engine OFF + dark.
+3. Pass criteria: charging starts ≤60s after crank; sustains through cruise and coast with no "engine shutdown detected" status; dark key-ON/engine-OFF stays blocked; sunny key-ON/engine-OFF matches the documented false-start behavior.
+4. If sustained charging shows V_IN dipping below $12.9\text{V}$ under load, lower Shutdown to $12.8\text{V}$ (never below the $12.7\text{V}$ lock-out) and re-verify. If the delayed path still fails to fire, lower V_start(delay) toward $13.0\text{V}$ while keeping $\ge 0.2\text{V}$ above Shutdown. Record final validated values here: _TBD field validation_.
 
 #### ⚙️ Input Voltage Lock-Out Settings
 * **Input Voltage Lock-Out:** Enabled

@@ -17,7 +17,6 @@ The master spec has been split into focused files under `spec/` for optimal agen
 | `spec/04-hardware-layout.md` | Hardware inventory, bus bar distribution, battery box internals (S2, S5, S5A). Load for component adds. |
 | `spec/05-installation-safety.md` | System overview, parasitic strategy, mechanical install, solar safety (S1, S7, S8). Load for safety reference. |
 | `AGENTS.md` | This file — opencode agent instructions |
-| `opencode.json` | Agent/plugin configuration |
 
 ## Section Origins
 
@@ -108,13 +107,13 @@ When you need to navigate the spec without a full read:
 - `Section X` — jump to a section number
 - Component names: `Orion`, `Cyrix`, `SmartShunt`, `BatteryProtect`, `MPPT`
 - Wire identifiers: `8 AWG CCA`, `House Charging Highway`, `Ignition Signal Line`
-- Fuse identifiers: `40A JCase`, `30A MIDI`, `50A MRBF`
+- Fuse identifiers: `40A JCase`, `30A MIDI`
 - Settings: `Lock-out Threshold`, `Absorption Voltage`, `Remote On/Off`
 
 ## Design Principles (Do Not Violate)
 
 1. **No chassis ground.** The dedicated negative return highway is inviolable. All negatives return to the starter battery (-) lug, not the frame.
-2. **SW6 is always on.** The solar offset strategy (`spec/01-system-core.md` Section 11) depends on this. Do not suggest toggling SW6 off as a normal operating procedure.
+2. **SW6 is always on, with a no-sun exception.** The solar offset strategy (`spec/01-system-core.md` Section 11) depends on this. Do not suggest toggling SW6 off as a normal operating procedure — except the one approved case: SW6 OFF while parked with no sunlight (nothing to offset the coil debt). See `spec/05-installation-safety.md` Section 1.
 3. **The Cyrix is the automatic load-shedding device.** When starter voltage drops below 12.8V, the Cyrix opens, isolating house loads. This is the primary safety mechanism.
 4. **The 5-pin SPDT relay interlocks Orion and Cyrix.** They are never both active. Engine running = Orion active, Cyrix locked open. Engine off = Cyrix armed, Orion forced off.
 5. **PV must be physically disconnected** (roof MC4) before any service. The MPPT solar disable switch does NOT isolate PV conductors (`spec/05-installation-safety.md` Section 8).
@@ -189,6 +188,8 @@ When the context requires decisions, ask:
 | Ground-shift false readings | SmartShunt shows odd voltages while driving | Accepted non-isolated DC-DC common-mode shift | Apply `spec/03-controls-settings.md` Section 13 calibration offsets; check Cyrix is immobilized by relay |
 | Battery box doesn't charge | No current through charge patch | BMS LVD latched (drained below 11.0V) | Jump-start battery box via XT60 load port temporarily to wake BMS |
 | SmartCap bed lights always-on | LED indicator on local switch | By design — SW6 always hot | Normal; verify draw is included in 25mA parasitic budget (`spec/01-system-core.md` Section 11) |
+| Bed lights work with SW6 OFF | Lights illuminate despite SW6 toggled off | (a) Daylight solar back-feed: MPPT → truck bus → T-junction — normal; (b) stuck upfitter relay; (c) historical Phase 1 Cyrix jumper (removed) back-feeding the frame highway | Voltmeter at Frame Positive T-Junction first: ~12V in daylight = (a), normal; ~12V in dark = (b) relay stuck; ~0V but lights lit = unexpected, trace feed (`spec/01-system-core.md` Section 12 item 4) |
+| Orion "Charge disabled due to: Engine shutdown detected" while engine running | VictronConnect status message; no charge current | ESD Start/Delayed-Start threshold set above the measured engine-running input (Ford 7.3 rests ~13.4V at the Orion) | Apply the tuned ESD values in `spec/03-controls-settings.md` Section 13.1 (Start 14.0V catches crank spike; Delayed 13.1V sits 0.3V below measured 13.4V) and run its field-validation procedure |
 
 ## System Physics Reference
 
