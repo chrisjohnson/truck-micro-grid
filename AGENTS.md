@@ -17,7 +17,6 @@ The master spec has been split into focused files under `spec/` for optimal agen
 | `spec/04-hardware-layout.md` | Hardware inventory, bus bar distribution, battery box internals (S2, S5, S5A). Load for component adds. |
 | `spec/05-installation-safety.md` | System overview, parasitic strategy, mechanical install, solar safety (S1, S7, S8). Load for safety reference. |
 | `AGENTS.md` | This file — opencode agent instructions |
-| `opencode.json` | Agent/plugin configuration |
 
 ## Section Origins
 
