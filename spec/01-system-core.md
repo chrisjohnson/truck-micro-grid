@@ -75,8 +75,7 @@ graph TD
     subgraph LowerBoard ["Lower Sub-Board (Bed Wall)"]
         Anderson["Anderson Connector"]
         MC4["MC4 Logic Connector"]
-        HouseChgBus["House Charging Bus Bar"]
-        HouseLdBus["House Load Bus Bar (Protected)"]
+        HousePosBus["House Positive Bus Bar"]
         LowerNegBus["Lower Neg Bus Bar"]
         XT60_Bat1_Chg["XT60 Bat 1 Charge Port"]
         XT60_Bat2_Chg["XT60 Bat 2 Charge Port"]
@@ -88,7 +87,6 @@ graph TD
 
     subgraph Bat1Box ["Battery Box 1"]
         Bat1["Goldenmate Battery 1"]
-        MRBF1["50A MRBF Fuse"]
         Shunt1["SmartShunt 1"]
         BP1["BatteryProtect 1"]
         Box1_Chg["XT60 Charge/House Port"]
@@ -97,7 +95,6 @@ graph TD
 
     subgraph Bat2Box ["Battery Box 2"]
         Bat2["Goldenmate Battery 2"]
-        MRBF2["50A MRBF Fuse"]
         Shunt2["SmartShunt 2"]
         BP2["BatteryProtect 2"]
         Box2_Chg["XT60 Charge/House Port"]
@@ -147,7 +144,7 @@ graph TD
     SolarPanel ---|mppt-pv+/-| MPPT
 
     Orion ---|orion-out+:cyrix-30| Cyrix
-    Cyrix ---|cyrix-30:FUSE-30a-midi| HouseChgBus
+    Cyrix ---|cyrix-30:FUSE-30a-midi| HousePosBus
 
     %% Negative Returns - Upper Board
     Orion ---|orion-in-/out-| UpperNegBus
@@ -156,14 +153,14 @@ graph TD
     Relay ---|relay-85| UpperNegBus
 
     %% Lower Board Bus Connections - Charging
-    HouseChgBus ---|FUSE-30a-midi| XT60_Bat1_Chg
-    HouseChgBus ---|FUSE-30a-midi| XT60_Bat2_Chg
+    HousePosBus ---|FUSE-30a-midi| XT60_Bat1_Chg
+    HousePosBus ---|FUSE-30a-midi| XT60_Bat2_Chg
 
     %% Lower Board Bus Connections - Loads
-    HouseLdBus ---|FUSE-30a-midi| XT60_Bat1_Ld
-    HouseLdBus ---|FUSE-30a-midi| XT60_Bat2_Ld
-    HouseLdBus ---|FUSE-20a-midi| XT60_Load1
-    HouseLdBus ---|FUSE-20a-midi| XT60_Load2
+    HousePosBus ---|FUSE-30a-midi| XT60_Bat1_Ld
+    HousePosBus ---|FUSE-30a-midi| XT60_Bat2_Ld
+    HousePosBus ---|FUSE-20a-midi| XT60_Load1
+    HousePosBus ---|FUSE-20a-midi| XT60_Load2
 
     %% Lower Board Negative Connections
     XT60_Bat1_Chg --- LowerNegBus
@@ -180,9 +177,7 @@ graph TD
     XT60_Bat2_Ld ===|xt60-ld-patch| Box2_Ld
 
     %% Battery Box 1 Internals
-    Bat1 ===|MRBF-50A| MRBF1
-    MRBF1 ---|direct-chg| Box1_Chg
-    MRBF1 ---|BP-IN| BP1
+    Bat1 ---|BP-IN| BP1
     BP1 ---|BP-OUT| Box1_Ld
     Bat1 ---|neg-cable| Shunt1
     Shunt1 ---|shunt-neg| Box1_Chg
@@ -190,9 +185,7 @@ graph TD
     Shunt1 ---|BP-GND| BP1
 
     %% Battery Box 2 Internals
-    Bat2 ===|MRBF-50A| MRBF2
-    MRBF2 ---|direct-chg| Box2_Chg
-    MRBF2 ---|BP-IN| BP2
+    Bat2 ---|BP-IN| BP2
     BP2 ---|BP-OUT| Box2_Ld
     Bat2 ---|neg-cable| Shunt2
     Shunt2 ---|shunt-neg| Box2_Chg
@@ -215,15 +208,14 @@ graph TD
                                                                     │
                                                  ┌──────────────────┴──────────────────┐
                                                  ▼                                     ▼
-                                       (8 AWG CCA + 18 AWG Run)             (Lower Sub-Board Split Bus Bars)
-                                       (Runs up the SmartCap wall)             ├─ Charging Bus Bar (Unprotected)
-                                                 │                             │   ├─ 30A Fuse -> XT60 Battery 1 Charge Port
-                                                 ▼                             │   └─ 30A Fuse -> XT60 Battery 2 Charge Port
-                                        [ UPPER SUB-BOARD ]                    └─ Load Bus Bar (Protected)
-                                       (SmartCap Ceiling/Wall)                     ├─ 30A Fuse <- XT60 Battery 1 Load Port
-                                                 │                                 ├─ 30A Fuse <- XT60 Battery 2 Load Port
-                             ┌───────────────────┼───────────────────┐             ├─ 20A Fuse -> XT60 Load 1 (Fridge)
-                             ▼                   ▼                   ▼             └─ 20A Fuse -> XT60 Load 2 (Heater)
+                                       (8 AWG CCA + 18 AWG Run)              (House Positive Bus Bar)
+                                       (Runs up the SmartCap wall)             ├─ 30A Fuse -> XT60 Battery 1 Charge Port
+                                                 │                             ├─ 30A Fuse -> XT60 Battery 1 Load Port
+                                                 ▼                             ├─ 30A Fuse -> XT60 Battery 2 Charge Port
+                                        [ UPPER SUB-BOARD ]                    ├─ 30A Fuse -> XT60 Battery 2 Load Port
+                                       (SmartCap Ceiling/Wall)                     ├─ 20A Fuse -> XT60 Load 1 (Fridge)
+                                                 │                                 └─ 20A Fuse -> XT60 Load 2 (Heater/Aux)
+                             ┌───────────────────┼───────────────────┐
                      [ Truck Bus Bar ]   [ 5-Pin Relay ]    [ Upper Negative Bus Bar ]
 ```
 
@@ -231,18 +223,15 @@ graph TD
 
 #### 1. Lower Sub-Board (Wall above tub lip):
 * **Grounding:** The lower common negative bus bar connects directly to the incoming 8 AWG dedicated negative return wire from the Anderson connector. The 8 AWG negative wire leading to the upper board lands on this same terminal (daisy-chained).
-* **Bus Bars (Split Positive Configuration):** To utilize the individual battery box over-discharge protection, the lower board's positive distribution is divided into two separate, isolated bus bars:
-  1. **House Charging Bus Bar (Unprotected):** Directly connects the upper board charging highway to the battery boxes' direct Charge/House ports.
-     * Stud 1: Incoming 8 AWG OFC House Charging Highway (fused at 30A MIDI).
-     * Stud 2: XT60 Battery 1 Charge Port (fused at 30A MIDI).
-     * Stud 3: XT60 Battery 2 Charge Port (fused at 30A MIDI).
-  2. **House Load Bus Bar (Protected):** Parallels the load outputs from the battery boxes' protected Loads Only ports and distributes power to the loads.
-     * Stud A: XT60 Battery 1 Load Port (fused at 30A MIDI).
-     * Stud B: XT60 Battery 2 Load Port (fused at 30A MIDI).
-     * Stud C: XT60 Load Port 1 (Fridge) (fused at 20A MIDI).
-     * Stud D: XT60 Load Port 2 (Diesel Heater/Aux) (fused at 20A MIDI).
-* **Distribution Ports:** Houses six XT60 external ports (XT60 Battery 1 & 2 Charge, XT60 Battery 1 & 2 Load, and XT60 Loads 1 & 2).
-* **Charging Path:** Stud 1 of the House Charging Bus Bar connects to the **8 AWG OFC House Charging Highway** wire running up to the upper sub-board.
+* **House Positive Bus Bar:** Distributes charging input and battery/load outputs via a single positive bus bar. Each battery box contributes two XT60 ports (Charge/House and Loads Only) to the bus, each behind its own 30A fuse; house loads are fused at 20A.
+  * Stud 1: Incoming 8 AWG OFC House Charging Highway (fused at 30A MIDI).
+  * Stud 2: XT60 Battery 1 Charge/House Port (fused at 30A MIDI).
+  * Stud 3: XT60 Battery 1 Loads Only Port (fused at 30A MIDI).
+  * Stud 4: XT60 Battery 2 Charge/House Port (fused at 30A MIDI).
+  * Stud 5: XT60 Battery 2 Loads Only Port (fused at 30A MIDI).
+  * Stud 6: XT60 Load Port 1 (Fridge) (fused at 20A MIDI).
+  * Stud 7: XT60 Load Port 2 (Diesel Heater/Aux) (fused at 20A MIDI).
+* **Charging Path:** Stud 1 connects to the **8 AWG OFC House Charging Highway** wire running up to the upper sub-board.
 
 #### 2. Upper Sub-Board (SmartCap Ceiling):
 * **Truck-Side Positive Bus Bar:** Connects to the incoming always-hot 8 AWG CCA positive line from the Anderson connector.
@@ -310,16 +299,12 @@ To ensure system reliability, each fuse point has been audited for both wire saf
     * *Logic:* Sized for 12 AWG CCA. Provides 17% headroom over the 200W panel's theoretical max output (16.6A) to handle "Cloud Edge" solar spikes.
 
 ### 🔋 Lower Sub-Board & Battery Isolation
-* **30A MIDI (Charging Stud 1 - House Entry):**
-    * *Risk:* In series with the Cyrix 30A fuse; shared risk of nuisance blow during high-inrush charging events.
-* **30A MIDI (Charging Stud 2 & 3 - XT60 Battery Charge Ports):**
-    * *Strict Requirement:* **MUST** balance batteries to 100% SoC before connecting the Charge/House ports. Connecting a full battery in parallel with a discharged battery will result in an immediate fuse blow due to balancing inrush current.
-* **30A MIDI (Load Stud A & B - XT60 Battery Load Ports):**
-    * *Logic:* Protects the load patch cables from the lower board to the battery boxes. Sized to handle full continuous load draws while offering safety headroom for 12 AWG wire.
-* **20A MIDI (Load Stud C & D - XT60 Load Ports):**
-    * *Real-World Check:* Sized for diesel heater glow-plug surges (12A) and fridge startup spikes (5A). Extremely low nuisance risk.
-* **50A MRBF (Battery Terminal Posts inside Boxes):**
-    * *Logic:* Primary internal short-circuit protection for the battery box. In a fault scenario on a patch cable, the lower sub-board's 30A MIDI fuses will blow first (selective coordination), preserving the internal 50A MRBF.
+* **30A MIDI (Stud 1 - House Entry):**
+    * *Risk:* In series with the Cyrix 30A fuse; shared risk of nuisance blow during high-inrush events.
+* **30A MIDI (Stud 2–5 - XT60 Battery Ports):**
+    * *Strict Requirement:* **MUST** balance batteries to 100% SoC before connection. Connecting a full battery to a discharged battery will result in an immediate fuse blow due to balancing inrush current. Cross-battery isolation is enforced because inter-battery balancing current must pass through both fuses on each leg to cross-feed.
+* **20A MIDI (Stud 6 & 7 - XT60 Load Ports):**
+    * *Logic:* Protects individual load circuits; sized for fridge/diesel heater startup surges.
 
 ---
 
